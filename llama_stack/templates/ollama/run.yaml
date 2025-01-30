@@ -10,6 +10,8 @@ apis:
 - telemetry
 - tool_runtime
 - vector_io
+- vector_search
+- vector_dbs
 providers:
   inference:
   - provider_id: ollama
@@ -85,6 +87,14 @@ providers:
   - provider_id: rag-runtime
     provider_type: inline::rag-runtime
     config: {}
+  vector_dbs:
+    - provider_id: meta-reference
+      provider_type: inline::meta-reference
+      config:
+        kvstore:
+          type: sqlite
+          namespace: null
+          db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/vector_dbs_store.db
 metadata_store:
   type: sqlite
   db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/registry.db
