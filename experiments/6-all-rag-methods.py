@@ -123,15 +123,18 @@ class RAGImplementation:
             cprint(f"Error in rag_tool method: {str(e)}", "red")
 
     def method3_agent_rag(self, documents: List[Document]):
-        """Method 3: Agent-based RAG Implementation with robust error handling and logging"""
+        """Method 3: Agent-based RAG Implementation with advanced configuration and document handling"""
         cprint("\n=== Method 3: Agent-based RAG ===", "yellow")
 
         try:
-            # Configure agent with optimized settings
+            # Configure agent with comprehensive settings
             agent_config = AgentConfig(
                 model=os.environ.get('INFERENCE_MODEL', "Llama3.2-3B-Instruct"),
-                instructions="""You are a concise assistant. Use the retrieved context to answer queries. 
-                              Focus on providing brief and relevant information based on the context.""",
+                instructions="""You are a concise assistant. Your task is to:
+                              1. Use ONLY the retrieved context to answer queries
+                              2. Provide brief, focused responses
+                              3. If you can't find relevant information in the context, say so
+                              4. Do not make up or infer information not present in the context""",
                 enable_session_persistence=False,
                 max_infer_iters=2,
                 toolgroups=[
@@ -139,42 +142,50 @@ class RAGImplementation:
                         "name": "builtin::rag",
                         "args": {
                             "vector_db_ids": [self.vector_db_id],
-                            "top_k": 2,
-                            "min_score": 0.7
+                            "top_k": 3,
+                            "query_config": {
+                                "max_tokens_in_context": 4096,  # Max context window size
+                                "max_chunks": 4,  # Number of chunks to consider
+                                "query_generator_config": {
+                                    "type": "default",
+                                    "separator": "\n"
+                                }
+                            }
                         }
                     }
                 ]
             )
 
-            # Create agent and session with event logging
+            # Create agent and session
             agent = Agent(self.client, agent_config)
             session_id = agent.create_session("rag_session")
 
-            # Define focused prompts for better results
-            user_prompts = [
-                "Based on the retrieved context, list the 2 most important topics mentioned. Be very brief.",
-            ]
-
-            for prompt in user_prompts:
-                cprint(f'User> {prompt}', 'green')
-                try:
-                    response = agent.create_turn(
-                        messages=[{"role": "user", "content": prompt}],
-                        session_id=session_id,
-                    )
-
-                    # Handle streaming response with event logging
-                    for log in EventLogger().log(response):
-                        try:
-                            log.print()
-                        except Exception as e:
-                            cprint(f"Error printing log: {str(e)}", "red")
-                            continue
-
-                except httpx.ReadTimeout:
-                    cprint("Response timed out. Try reducing the context or simplifying the query.", "red")
-                except Exception as e:
-                    cprint(f"Error in response handling: {str(e)}", "red")
+            # Use focused prompt for better results
+            prompt = "Based on the retrieved context, what are the 3 most important topics mentioned? List them as bullet points."
+            
+            cprint(f'\nUser> {prompt}', 'green')
+            try:
+                response = agent.create_turn(
+                    messages=[{
+                        "role": "user",
+                        "content": prompt
+                    }],
+                    session_id=session_id,
+                    documents=documents  # Include documents in the turn
+                )
+                
+                # Handle streaming response with event logging
+                for log in EventLogger().log(response):
+                    try:
+                        log.print()
+                    except Exception as e:
+                        cprint(f"Error printing log: {str(e)}", "red")
+                        continue
+                    
+            except httpx.ReadTimeout:
+                cprint("Response timed out. Try reducing the context or simplifying the query.", "red")
+            except Exception as e:
+                cprint(f"Error in response handling: {str(e)}", "red")
 
         except Exception as e:
             cprint(f"Error in agent_rag method setup: {str(e)}", "red")
