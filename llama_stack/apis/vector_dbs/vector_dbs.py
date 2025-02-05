@@ -43,16 +43,16 @@ class ListVectorDBsResponse(BaseModel):
 @runtime_checkable
 @trace_protocol
 class VectorDBs(Protocol):
-    @webmethod(route="/alpha/vector-dbs", method="GET")
+    @webmethod(route="/vector-dbs", method="GET")
     async def list_vector_dbs(self) -> ListVectorDBsResponse: ...
 
-    @webmethod(route="/alpha/vector-dbs/{vector_db_id}", method="GET")
+    @webmethod(route="/vector-dbs/{vector_db_id}", method="GET")
     async def get_vector_db(
         self,
         vector_db_id: str,
     ) -> Optional[VectorDB]: ...
 
-    @webmethod(route="/alpha/vector-dbs", method="POST")
+    @webmethod(route="/vector-dbs", method="POST")
     async def register_vector_db(
         self,
         vector_db_id: str,
