@@ -1,0 +1,14 @@
+name: ollama
+distribution_spec:
+  description: Like local, but use ollama for running LLM inference
+  providers:
+    inference: remote::ollama
+    safety: inline::llama-guard
+    agents: inline::meta-reference
+    vector_io: inline::faiss
+    datasetio: inline::localfs
+    scoring: inline::basic
+    eval: inline::meta-reference
+    post_training: inline::torchtune
+    telemetry: inline::meta-reference
+image_type: container
