@@ -53,6 +53,7 @@ async def main():
     # Clean up existing vector db
     try:
         client.vector_dbs.delete(vector_db_id=vector_db_id)
+
     except:
         pass
 
@@ -67,7 +68,7 @@ async def main():
     client.tool_runtime.rag_tool.insert(
         documents=documents,
         vector_db_id=vector_db_id,
-        chunk_size_in_tokens=512,  # Increased chunk size for better context
+        chunk_size_in_tokens=256,  # Increased chunk size for better context
     )
 
     # Configure agent with context window settings
@@ -85,13 +86,12 @@ async def main():
                 "name": "builtin::rag",
                 "args": {
                     "vector_db_ids": [vector_db_id],
-                    "top_k": 4,
                     "query_config": {
-                        "max_tokens_in_context": 4096,  # Total context window size
-                        "max_chunks": 4,                # Max number of chunks to use
+                        "max_tokens_in_context": 1800,  # Stay within Ollama's limits
+                        "max_chunks": 3,
                         "query_generator_config": {
                             "type": "default",
-                            "separator": "\n"            # Chunk separator
+                            "separator": "\n"
                         }
                     }
                 }
