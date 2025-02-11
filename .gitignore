@@ -21,3 +21,7 @@ docs/src
 pyrightconfig.json
 venv/
 pytest-report.xml
+
+# ChromaDB files
+experiments/chroma.log
+experiments/chroma_vdb/
