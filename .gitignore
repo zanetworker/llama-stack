@@ -26,6 +26,8 @@ pytest-report.xml
 .python-version
 =======
 
+experiments/litellm-config.yaml
+
 # ChromaDB files
 experiments/chroma.log
 experiments/chroma_vdb/
