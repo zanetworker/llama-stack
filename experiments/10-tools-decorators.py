@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 @client_tool
-async def calculate(x: float, y: float, operation: str) -> dict:
+def calculate(x: float, y: float, operation: str) -> dict:
     """Simple calculator tool that performs basic math operations.
 
     :param x: First number to perform operation on
@@ -51,8 +51,6 @@ async def run_main():
 
     logger.debug("Setting up agent config...")
 
-    client_tools = [calculate]
-
     agent_config = AgentConfig(
         model=os.environ.get('INFERENCE_MODEL', 'llama2'),
         instructions="""You are a calculator assistant. Use the calculate tool to perform operations.
@@ -61,13 +59,12 @@ When using the calculate tool:
 2. Use the appropriate operation (add, subtract, multiply, divide)
 3. Present the result clearly
 4. Handle any errors gracefully""",
-        client_tools=[
-            client_tool.get_tool_definition() for client_tool in client_tools
-        ],
+        client_tools=[calculate.get_tool_definition()],
         toolgroups=[],
         tool_choice="auto",
         enable_session_persistence=False,
         tool_prompt_format="python_list",
+        max_tool_calls=3,
     )
     logger.debug(f"Agent config: {agent_config}")
 
@@ -78,18 +75,30 @@ When using the calculate tool:
     prompt = "What is 25 plus 15?"
     print(f"\nUser: {prompt}")
 
-    response = agent.create_turn(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-        session_id=session_id,
-    )
+    try:
+        response_gen = agent.create_turn(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            session_id=session_id,
+        )
 
-    for log in EventLogger().log(response):
-        log.print()
+        event_logger = EventLogger()
+        for chunk in event_logger.log(response_gen):
+            if chunk is None:
+                continue
+            try:
+                chunk.print(flush=True)
+            except Exception as e:
+                logger.error(f"Error printing chunk: {e}")
+                continue
+
+    except Exception as e:
+        logger.error(f"Error during agent turn: {e}")
+        raise
 
 
 def main():
