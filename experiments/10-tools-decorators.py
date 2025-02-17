@@ -8,6 +8,8 @@ from llama_stack_client.lib.agents.client_tool import client_tool
 from llama_stack_client.lib.agents.agent import Agent
 from llama_stack_client.lib.agents.event_logger import EventLogger
 from llama_stack_client.types.agent_create_params import AgentConfig
+from termcolor import colored
+
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,8 +53,21 @@ async def run_main():
 
     logger.debug("Setting up agent config...")
 
+    print("Calculate tool definition:")
+    print(calculate.get_tool_definition())
+    available_models = [
+        model.identifier for model in client.models.list() if model.model_type == "llm"
+    ]
+    if not available_models:
+        print(colored("No available models. Exiting.", "red"))
+        return
+    else:
+        selected_model = available_models[0]
+        print(f"Using model: {selected_model}")
+
     agent_config = AgentConfig(
-        model=os.environ.get('INFERENCE_MODEL', 'llama2'),
+        # model=os.environ.get('INFERENCE_MODEL', 'llama3.2:3b-instruct-fp16'),
+        model=selected_model,
         instructions="""You are a calculator assistant. Use the calculate tool to perform operations.
 When using the calculate tool:
 1. Extract the numbers and operation from the user's request
@@ -85,6 +100,8 @@ When using the calculate tool:
             ],
             session_id=session_id,
         )
+        print("Agent response:")
+        print(response_gen)
 
         event_logger = EventLogger()
         for chunk in event_logger.log(response_gen):
