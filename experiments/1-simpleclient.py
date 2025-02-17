@@ -1,4 +1,5 @@
 import os
+from termcolor import colored
 
 def create_http_client():
     from llama_stack_client import LlamaStackClient
@@ -18,7 +19,7 @@ client = create_http_client()  # or create_http_client() depending on the enviro
 
 # List available models
 models = client.models.list()
-print("--- Available models: ---")
+print(colored("--- Available models: ---", "green"))
 for m in models:
     print(f"- {m.identifier}")
 print()
