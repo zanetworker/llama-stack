@@ -54,7 +54,7 @@ class RAGImplementation:
             provider_id="faiss",
         )
 
-    def method2_rag_tool(self, documents: List[Document]):
+    def method_1_rag_tool(self, documents: List[Document]):
         """Method 2: RAG Tool Implementation with improved error handling"""
         cprint("\n=== Method 2: RAG Tool ===", "yellow")
 
@@ -100,7 +100,7 @@ class RAGImplementation:
         except Exception as e:
             cprint(f"Error in rag_tool method: {str(e)}", "red")
 
-    def method3_agent_rag(self, documents: List[Document]):
+    def method_2_agent_rag(self, documents: List[Document]):
         """Method 3: Agent-based RAG Implementation with fixed configuration"""
         cprint("\n=== Method 3: Agent-based RAG ===", "yellow")
 
@@ -183,8 +183,8 @@ async def main():
     rag.setup_vector_db()
 
     # Run the fixed methods
-    rag.method2_rag_tool(documents)
-    rag.method3_agent_rag(documents)
+    rag.method_1_rag_tool(documents)
+    rag.method_2_agent_rag(documents)
 
 if __name__ == "__main__":
     asyncio.run(main())

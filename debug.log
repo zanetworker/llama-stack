@@ -1,0 +1,9 @@
+2025-02-17 12:14:28 - INFO - llama3.2:3b-instruct-fp16
+2025-02-17 12:14:29 - INFO - HTTP Request: POST http://localhost:5003/v1/inference/chat-completion "HTTP/1.1 200 OK"
+2025-02-17 12:14:29 - INFO - get_weather tool invoked
+2025-02-17 12:14:30 - INFO - HTTP Request: POST http://localhost:5003/v1/inference/chat-completion "HTTP/1.1 200 OK"
+-------
+temperature=22.2 response='The current temperature in Atlanta is 22.2 degrees Celsius.'
+-------
+Temperature:    22.2
+Description:    The current temperature in Atlanta is 22.2 degrees Celsius.
