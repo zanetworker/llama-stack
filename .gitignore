@@ -27,3 +27,4 @@ experiments/litellm-config.yaml
 # ChromaDB files
 experiments/chroma.log
 experiments/chroma_vdb/
+experiments/mcp

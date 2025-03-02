@@ -28,7 +28,13 @@ distribution_spec:
     - remote::tavily-search
     - inline::code-interpreter
     - inline::rag-runtime
+    - remote::model-context-protocol
   dependencies:
     - chardet>=5.0.0 
     - pypdf>=3.0.0
-image_type: container
+  container_setup:
+    pre_commands:
+      - mkdir -p /app /.llama /.cache
+      - touch /app/.keep /.llama/.keep /.cache/.keep
+# image_type: venv
+# image_type: container
