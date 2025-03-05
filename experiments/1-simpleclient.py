@@ -15,7 +15,7 @@ def create_library_client(template="ollama"):
     return client
 
 
-client = create_http_client()  # or create_http_client() depending on the environment you picked
+client = create_http_client()
 
 # List available models
 models = client.models.list()
