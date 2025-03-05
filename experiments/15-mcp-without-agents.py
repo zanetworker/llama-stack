@@ -39,6 +39,8 @@ except Exception as e:
     cprint(f"Error registering MCP toolgroup: {e}", "red")
     exit(1)
 
+# print that you are listing
+cprint("Listing tools in the toolgroup...", "yellow")
 # List available tools in the toolgroup
 tools = client.tools.list(toolgroup_id="mcp::filesystem")
 cprint(f"Available tools: {[t.identifier for t in tools]}", "cyan")
