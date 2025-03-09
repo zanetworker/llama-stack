@@ -28,3 +28,6 @@ experiments/litellm-config.yaml
 experiments/chroma.log
 experiments/chroma_vdb/
 experiments/mcp
+
+# LlamaStack
+context/
