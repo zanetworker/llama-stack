@@ -1,0 +1,8 @@
+llama-stack-client
+python-dotenv
+requests
+sounddevice
+soundfile
+pathlib
+SpeechRecognition
+PyAudio

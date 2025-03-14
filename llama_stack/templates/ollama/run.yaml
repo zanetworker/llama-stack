@@ -10,6 +10,8 @@ apis:
 - telemetry
 - tool_runtime
 - vector_io
+- vector_search
+- vector_dbs
 providers:
   inference:
   - provider_id: ollama
@@ -95,13 +97,27 @@ providers:
   - provider_id: rag-runtime
     provider_type: inline::rag-runtime
     config: {}
+<<<<<<< HEAD
   - provider_id: model-context-protocol
     provider_type: remote::model-context-protocol
     config: {}
+<<<<<<< HEAD
   - provider_id: wolfram-alpha
     provider_type: remote::wolfram-alpha
     config:
       api_key: ${env.WOLFRAM_ALPHA_API_KEY:}
+=======
+=======
+  vector_dbs:
+    - provider_id: meta-reference
+      provider_type: inline::meta-reference
+      config:
+        kvstore:
+          type: sqlite
+          namespace: null
+          db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/vector_dbs_store.db
+>>>>>>> 7d01b2c0 (add experiments)
+>>>>>>> 67eeaf33 (add expirements)
 metadata_store:
   type: sqlite
   db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/registry.db
@@ -128,7 +144,5 @@ tool_groups:
   provider_id: rag-runtime
 - toolgroup_id: builtin::code_interpreter
   provider_id: code-interpreter
-- toolgroup_id: builtin::wolfram_alpha
-  provider_id: wolfram-alpha
 server:
   port: 8321
