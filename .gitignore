@@ -22,4 +22,11 @@ pyrightconfig.json
 venv/
 pytest-report.xml
 .coverage
+<<<<<<< HEAD
 .python-version
+=======
+
+# ChromaDB files
+experiments/chroma.log
+experiments/chroma_vdb/
+>>>>>>> 889d6d9b (new experiments)

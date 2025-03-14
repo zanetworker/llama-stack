@@ -1,0 +1,8 @@
+model_list:
+  - model_name: meta-llama/Llama-3.2-1B-Instruct
+    litellm_params:
+      model: hosted_vllm/granite-3-8b-instruct
+      api_key: f43e4eb5fe575aa6b9ab9c370ea06702 
+      api_base: https://granite-3-8b-instruct-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443
+general_settings: 
+  master_key: sk-1234

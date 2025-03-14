@@ -10,5 +10,5 @@ from llama_stack.schema_utils import json_schema_type
 
 
 @json_schema_type
-class BedrockSafetyConfig(BedrockBaseConfig):
+class sBedrockSafetyConfig(BedrockBaseConfig):
     pass
