@@ -128,7 +128,7 @@ class LlamaStackAsLibraryClient(LlamaStackClient):
         self.skip_logger_removal = skip_logger_removal
         self.provider_data = provider_data
 
-    def initialize(self):
+    def initialize(self) -> object:
         if in_notebook():
             import nest_asyncio
 

@@ -1,0 +1,2 @@
+-r requirements.txt
+git+https://github.com/meta-llama/llama-stack-client-python.git@main#egg=llama-stack-client
