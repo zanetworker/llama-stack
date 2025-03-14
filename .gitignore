@@ -31,4 +31,8 @@ experiments/litellm-config.yaml
 # ChromaDB files
 experiments/chroma.log
 experiments/chroma_vdb/
+<<<<<<< HEAD
 >>>>>>> 889d6d9b (new experiments)
+=======
+experiments/mcp
+>>>>>>> 4d756fa4 (update mcp example)
