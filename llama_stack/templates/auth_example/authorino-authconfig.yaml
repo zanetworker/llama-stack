@@ -1,0 +1,67 @@
+apiVersion: authorino.kuadrant.io/v1beta3
+kind: AuthConfig
+metadata:
+  name: llama-stack-auth
+  namespace: llama-stack
+spec:
+  hosts:
+    - llama-stack-service.example.com
+
+  # Authentication configuration
+  authentication:
+    "keycloak-auth":
+      jwt:
+        issuerUrl: "${env.KEYCLOAK_REALM_URL}"
+        audiences:
+          - "${env.KEYCLOAK_CLIENT_ID}"
+
+  # Authorization policies
+  authorization:
+    "rbac-policy":
+      patternMatching:
+        patterns:
+          # Check for roles in the JWT
+          - selector: "auth.identity.metadata.realm_access.roles"
+            operator: incl
+            value: "data-scientist"
+
+    "vector-db-access":
+      patternMatching:
+        patterns:
+          # Only allow access to vector DBs with matching tenant ID
+          - selector: "context.request.http.path"
+            operator: matches
+            value: "^/vector_dbs/(?P<vector_db_id>[^/]+)"
+          - selector: "auth.identity.metadata.tenant_id"
+            operator: eq
+            value: "{vector_db_id}"
+        all: true
+
+    "tool-access":
+      patternMatching:
+        patterns:
+          # Only allow access to tools that the user has permission for
+          - selector: "context.request.http.path"
+            operator: matches
+            value: "^/tools/(?P<tool_id>[^/]+)"
+          - selector: "auth.identity.metadata.allowed_tools"
+            operator: incl
+            value: "{tool_id}"
+        all: true
+
+  # Response customization
+  response:
+    # Add custom headers to the response
+    headers:
+      X-User-ID: "{{ auth.identity.sub }}"
+      X-User-Roles: "{{ auth.identity.metadata.realm_access.roles | join(',') }}"
+      X-Tenant-ID: "{{ auth.identity.metadata.tenant_id }}"
+
+    # Dynamic JSON object to be added to the response
+    jsonBody:
+      user:
+        id: "{{ auth.identity.sub }}"
+        name: "{{ auth.identity.metadata.name }}"
+        email: "{{ auth.identity.metadata.email }}"
+        roles: "{{ auth.identity.metadata.realm_access.roles }}"
+        tenant: "{{ auth.identity.metadata.tenant_id }}"

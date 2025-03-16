@@ -1,0 +1,37 @@
+version: '2'
+distribution_spec:
+  providers:
+    auth:
+      - provider_id: authorino
+        provider_type: inline::authorino
+        config:
+          url: ${env.AUTHORINO_URL}
+          auth_config_name: llama-stack-auth
+          providers:
+            keycloak:
+              provider_type: keycloak
+              config:
+                realm_url: ${env.KEYCLOAK_REALM_URL}
+                client_id: ${env.KEYCLOAK_CLIENT_ID}
+                client_secret: ${env.KEYCLOAK_CLIENT_SECRET}
+            spire:
+              provider_type: spire
+              config:
+                socket_path: ${env.SPIRE_SOCKET_PATH}
+          default_provider: keycloak
+          token_header: Authorization
+          token_prefix: Bearer
+          enable_token_exchange: true
+          protected_paths:
+            - "^/agents/.*"
+            - "^/vector_dbs/.*"
+            - "^/models/.*"
+            - "^/tools/.*"
+          public_paths:
+            - "^/auth/.*"
+            - "^/health$"
+    inference:
+      - remote::ollama
+    vector_io:
+      - inline::faiss
+      - remote::chromadb

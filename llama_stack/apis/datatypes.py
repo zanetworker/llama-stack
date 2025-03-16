@@ -26,6 +26,7 @@ class Api(Enum):
     tool_runtime = "tool_runtime"
 
     telemetry = "telemetry"
+    auth = "auth"  # Authentication and authorization API
 
     models = "models"
     shields = "shields"
