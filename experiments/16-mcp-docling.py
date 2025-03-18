@@ -4,6 +4,8 @@ from llama_stack_client.types.agent_create_params import AgentConfig
 from llama_stack_client import LlamaStackClient
 from termcolor import cprint
 import os
+import asyncio
+import time
 
 
 # Set your model ID
@@ -27,7 +29,6 @@ cprint(f"Using MCP provider: {mcp_provider.provider_id}", "green")
 # Try to unregister the toolgroup if it exists
 try:
     cprint("Unregistering existing toolgroup", "yellow")
-    client.toolgroups.unregister(toolgroup_id="mcp::filesystem")
     client.toolgroups.unregister(toolgroup_id="mcp::docling")
     cprint("Unregistered existing toolgroup", "yellow")
 except Exception:
@@ -58,11 +59,27 @@ Always use the appropriate tool when asked to process documents.""",
     enable_session_persistence=False,
     tool_choice="auto",
     tool_prompt_format="python_list",
-    max_tool_calls=3,
+    max_infer_iters=3,
 )
 
 # Create the agent
-agent = Agent(client, agent_config)
+agent = Agent(
+    client,
+    model=model_id,
+    instructions="""You are a helpful assistant with access to tools that can convert documents to markdown.
+    When asked to convert a document, use the 'convert_document' tool.
+    You can also extract tables with 'extract_tables' or get images with 'convert_document_with_images'.
+    Always use the appropriate tool when asked to process documents.""",
+    tool_config= {
+        "tool_choice": "auto",
+        "tool_prompt_format": "python_list"
+    },
+    tools=["mcp::docling"],
+    input_shields=[],
+    output_shields=[],
+    enable_session_persistence=False,
+    max_infer_iters=3
+)
 cprint("Successfully created agent", "green")
 
 # Create a session
