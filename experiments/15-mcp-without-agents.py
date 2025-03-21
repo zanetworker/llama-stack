@@ -1,5 +1,4 @@
 from llama_stack_client import LlamaStackClient
-from llama_stack_client.types.shared_params.url import URL
 from termcolor import cprint
 import os
 import json
@@ -23,122 +22,108 @@ cprint(f"Using MCP provider: {mcp_provider.provider_id}", "green")
 
 # Try to unregister the toolgroup if it exists
 try:
-    client.toolgroups.unregister(toolgroup_id="mcp::filesystem")
+    cprint("Unregistering existing toolgroup", "yellow")
+    client.toolgroups.unregister(toolgroup_id="mcp::docling")
     cprint("Unregistered existing toolgroup", "yellow")
 except Exception:
     pass  # Ignore if it doesn't exist
 
 # Register MCP tools
 try:
+    cprint("Registering MCP docling toolgroup", "yellow")
     client.toolgroups.register(
-        toolgroup_id="mcp::filesystem",
+        toolgroup_id="mcp::docling",
         provider_id="model-context-protocol",
-        mcp_endpoint=URL(uri="http://localhost:8000/sse"))
-    cprint("Successfully registered MCP toolgroup", "green")
+        mcp_endpoint={"uri": "http://0.0.0.0:8000/sse"})
+    cprint("Successfully registered MCP docling toolgroup", "green")
 except Exception as e:
     cprint(f"Error registering MCP toolgroup: {e}", "red")
     exit(1)
 
-# print that you are listing
-cprint("Listing tools in the toolgroup...", "yellow")
 # List available tools in the toolgroup
-tools = client.tools.list(toolgroup_id="mcp::filesystem")
+cprint("Listing tools in the toolgroup...", "yellow")
+tools = client.tools.list(toolgroup_id="mcp::docling")
 cprint(f"Available tools: {[t.identifier for t in tools]}", "cyan")
 
-# Get the first tool
+# Get available tools
 if tools:
-    tool = tools[0]
-    cprint(f"\nTool: {tool.identifier}", "cyan")
-    cprint(f"Description: {tool.description}", "cyan")
-    
-    # Display parameters with their details
-    cprint("\nParameters:", "cyan")
-    for param in tool.parameters:
-        param_type = getattr(param, 'parameter_type', 'unknown')
-        param_desc = getattr(param, 'description', 'No description')
-        param_required = getattr(param, 'required', False)
-        cprint(f"  - {param.name} ({param_type}): {param_desc} {'(Required)' if param_required else ''}", "cyan")
-    
-    # Create kwargs dynamically based on the first parameter
-    # In a real application, you would prompt the user for each required parameter
-    kwargs = {}
-    if tool.parameters:
-        first_param = tool.parameters[0]
-        # For demonstration, we're using a URL for any parameter, but in a real app
-        # you would use appropriate values based on parameter type
-        kwargs[first_param.name] = "https://github.com/DS4SD/docling-jobkit"
-        cprint(f"\nUsing parameter {first_param.name}={kwargs[first_param.name]}", "yellow")
-    
-    # Direct tool invocation
-    try:
-        cprint(f"\nInvoking tool: {tool.identifier} with {kwargs}", "magenta")
-        result = client.tool_runtime.invoke_tool(
-            tool_name=tool.identifier,
-            kwargs=kwargs
-        )
-        
-        # Print the raw result
-        cprint("\nTool invocation result:", "green")
-        if hasattr(result, 'content'):
-            content = result.content
-            if isinstance(content, dict) and 'text' in content:
-                raw_content = content['text']
-                cprint(f"Raw content length: {len(raw_content)} characters", "blue")
-                cprint(f"Raw content preview: {raw_content[:200]}...", "blue")
-            else:
-                raw_content = str(content)
-                cprint(f"Raw content length: {len(raw_content)} characters", "blue")
-                cprint(f"Raw content preview: {raw_content[:200]}...", "blue")
-        else:
-            raw_content = str(result)
-            cprint(f"Raw result: {raw_content[:200]}...", "blue")
-        
-        # Format the content using an LLM
-        try:
-            # Get available models
-            models = client.models.list()
-            cprint(f"Available models: {[m.identifier for m in models]}", "yellow")
-            
-            # Choose the first available model
-            if models:
-                model_id = models[1].identifier
-                cprint(f"Using model {model_id} for formatting", "green")
-                
-                # Prepare the prompt
-                prompt = f"""
-                I have fetched content from a website. Please format and summarize this content in a readable way.
-                Focus on the main elements of the page and provide a structured summary.
-                
-                Raw content:
-                {raw_content[:5000]}  # Limit to first 5000 chars to avoid token limits
-                """
-                
-                # Call the model using chat_completion
-                cprint("\nFormatting content with LLM...", "magenta")
-                response = client.inference.chat_completion(
-                    model_id=model_id,
-                    messages=[
-                        {"role": "system", "content": "You are a helpful assistant that summarizes web content."},
-                        {"role": "user", "content": prompt}
-                    ]
+    for tool in tools:
+        cprint(f"\nTool: {tool.identifier}", "cyan")
+        cprint(f"Description: {tool.description}", "cyan")
+
+        # Display parameters with their details
+        cprint("\nParameters:", "cyan")
+        for param in tool.parameters:
+            param_type = getattr(param, 'parameter_type', 'unknown')
+            param_desc = getattr(param, 'description', 'No description')
+            param_required = getattr(param, 'required', False)
+            cprint(f"  - {param.name} ({param_type}): {param_desc} {'(Required)' if param_required else ''}", "cyan")
+
+        # Example invocation for document conversion
+        if tool.identifier == "convert_document":
+            try:
+                cprint(f"\nInvoking tool: {tool.identifier}", "magenta")
+                result = client.tool_runtime.invoke_tool(
+                    tool_name=tool.identifier,
+                    kwargs={
+                        "source": "https://example.com/sample.pdf",
+                        "format": "markdown"
+                    }
                 )
-                
-                # Display the formatted result
-                cprint("\nFormatted content:", "green")
-                if hasattr(response, 'completion_message') and hasattr(response.completion_message, 'content'):
-                    cprint(response.completion_message.content, "blue")
-                else:
-                    cprint(f"Unexpected response format: {response}", "red")
-            else:
-                cprint("No models available for formatting", "red")
+                cprint("\nTool invocation result:", "green")
+                cprint(str(result)[:200] + "...", "blue")
+
+            except Exception as e:
+                cprint(f"Error invoking tool: {e}", "red")
+                import traceback
+                cprint(traceback.format_exc(), "red")
+
+        # Example invocation for table extraction
+        elif tool.identifier == "extract_tables":
+            try:
+                cprint(f"\nInvoking tool: {tool.identifier}", "magenta")
+                result = client.tool_runtime.invoke_tool(
+                    tool_name=tool.identifier,
+                    kwargs={
+                        "source": "https://example.com/sample.pdf"
+                    }
+                )
+                cprint("\nTool invocation result:", "green")
+                cprint(str(result)[:200] + "...", "blue")
+
+            except Exception as e:
+                cprint(f"Error invoking tool: {e}", "red")
+                import traceback
+                cprint(traceback.format_exc(), "red")
+
+        # Process results with LLM if needed
+        try:
+            model_id = os.environ["INFERENCE_MODEL"]
+            cprint(f"Using model {model_id} for processing", "green")
+            
+            prompt = f"""
+            I have processed a document using MCP tools. Please analyze and summarize the results.
+            
+            Results:
+            {str(result)[:5000]}  # Limit to first 5000 chars
+            """
+
+            response = client.inference.chat_completion(
+                model_id=model_id,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that analyzes document processing results."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            if hasattr(response, 'completion_message') and hasattr(response.completion_message, 'content'):
+                cprint("\nAnalysis:", "green")
+                cprint(response.completion_message.content, "blue")
+
         except Exception as e:
-            cprint(f"Error formatting with LLM: {e}", "red")
+            cprint(f"Error processing with LLM: {e}", "red")
             import traceback
             cprint(traceback.format_exc(), "red")
-            
-    except Exception as e:
-        cprint(f"Error invoking tool: {e}", "red")
-        import traceback
-        cprint(traceback.format_exc(), "red")
+
 else:
     cprint("No tools found in the toolgroup", "red")
