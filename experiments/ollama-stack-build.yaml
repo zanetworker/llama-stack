@@ -1,0 +1,40 @@
+version: '2'
+distribution_spec:
+  description: Use (an external) Ollama server for running LLM inference
+  providers:
+    inference:
+    - remote::ollama
+    vector_io:
+    - inline::faiss
+    # - remote::chromadb
+    # - remote::pgvector
+    safety:
+    - inline::llama-guard
+    agents:
+    - inline::meta-reference
+    telemetry:
+    - inline::meta-reference
+    eval:
+    - inline::meta-reference
+    datasetio:
+    - remote::huggingface
+    - inline::localfs
+    scoring:
+    - inline::basic
+    - inline::llm-as-judge
+    - inline::braintrust
+    tool_runtime:
+    - remote::brave-search
+    - remote::tavily-search
+    - inline::code-interpreter
+    - inline::rag-runtime
+    - remote::model-context-protocol
+  dependencies:
+    - chardet>=5.0.0 
+    - pypdf>=3.0.0
+  container_setup:
+    pre_commands:
+      - mkdir -p /app /.llama /.cache
+      - touch /app/.keep /.llama/.keep /.cache/.keep
+# image_type: venv
+# image_type: container

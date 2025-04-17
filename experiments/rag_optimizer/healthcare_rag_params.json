@@ -1,0 +1,18 @@
+{
+  "use_case": "Healthcare Applications",
+  "chunk_size_tokens": "~800",
+  "overlap_tokens": "Not specified, consider small overlap (e.g., 50)",
+  "embedding_model_recommendation": "Fine-tune on medical datasets (e.g., PubMedBERT or fine-tuned general)",
+  "top_k": "2-3",
+  "metadata_usage": "Patient context (anonymized), document type (study, notes), date",
+  "retrieval_enhancements": "Hierarchical/Multi-hop retrieval (optimized for speed)",
+  "generation_settings": "Higher precision, potentially lower temperature",
+  "prompting_technique": "Consider CoT for complex reasoning",
+  "output_guardrails": "Strong fact-checking against medical knowledge bases",
+  "chunking_strategy_recommendation": "Smaller chunks for precision, potentially sentence-level",
+  "adjustments_applied": {
+    "document_type": "technical",
+    "performance_priority": "latency",
+    "data_size": "small"
+  }
+}
