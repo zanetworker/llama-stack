@@ -238,7 +238,7 @@ class ConversationReplayer:
             # Try to get a preview of the conversation
             messages = self.extractor.extract_messages_from_trace(trace['trace_id'])
             
-            print(f"{i:2d}. 🔍 {trace['trace_id'][:16]}...")
+            print(f"{i:2d}. 🔍 {trace['trace_id']}")
             print(f"    📅 {trace['start_time']}")
             print(f"    📊 {trace['span_count']} spans, {len(messages)} messages")
             
@@ -267,8 +267,10 @@ class ConversationReplayer:
         if not turns:
             print("📭 Could not organize messages into conversation turns.")
             print("📊 Raw messages found:")
-            for msg in messages:
-                self._print_message(msg)
+            print("🔍 Showing detailed view with metadata...")
+            for i, msg in enumerate(messages, 1):
+                print(f"\n--- Message {i} ({self._format_timestamp(msg.timestamp)}) ---")
+                self._print_message(msg, show_metadata=True)
             return
         
         print(f"📊 Found {len(turns)} conversation turns")

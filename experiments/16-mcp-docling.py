@@ -40,7 +40,7 @@ try:
     client.toolgroups.register(
         toolgroup_id="mcp::docling",
         provider_id="model-context-protocol",
-        mcp_endpoint={"uri": "http://0.0.0.0:8000/sse"})
+        mcp_endpoint={"uri": "http://0.0.0.0:8002/sse"})
     cprint("Successfully registered MCP docling toolgroup", "green")
 except Exception as e:
     cprint(f"Error registering MCP toolgroup: {e}", "red")
