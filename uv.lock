@@ -1748,22 +1748,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5f/e4/f1546746049c99c6b8b247e2f34485b9eae36faa9322b84e2a17262e6712/litellm-1.74.9-py3-none-any.whl", hash = "sha256:ab8f8a6e4d8689d3c7c4f9c3bbc7e46212cc3ebc74ddd0f3c0c921bb459c9874", size = 8740449, upload-time = "2025-07-28T16:42:36.8Z" },
 ]
 
-[[package]]
-name = "llama-api-client"
-version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "distro" },
-    { name = "httpx" },
-    { name = "pydantic" },
-    { name = "sniffio" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/59/41/fa8521a0faff96bf5f810e2ab5b78c638f5ba44afd09aa86f94b6a1226ad/llama_api_client-0.2.0.tar.gz", hash = "sha256:b9bd5f5ad332b9133f0775a105f0940f057cbb311891f1d4487247d001c31f17", size = 117108, upload-time = "2025-08-12T17:07:07.734Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/11/198e65c1a50d9e839b4e3d346b4bd0f624e532446e468d1aba6c74ed7484/llama_api_client-0.2.0-py3-none-any.whl", hash = "sha256:50614ed991e1a72439e6a624a97e6000615ada1b9e2046ecc026fe62f107663c", size = 85002, upload-time = "2025-08-12T17:07:06.293Z" },
-]
 
 [[package]]
 name = "llama-stack"
@@ -1780,7 +1764,6 @@ dependencies = [
     { name = "huggingface-hub" },
     { name = "jinja2" },
     { name = "jsonschema" },
-    { name = "llama-api-client" },
     { name = "llama-stack-client" },
     { name = "openai" },
     { name = "opentelemetry-exporter-otlp-proto-http" },
@@ -1906,7 +1889,6 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.34.0,<1.0" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "jsonschema" },
-    { name = "llama-api-client", specifier = ">=0.1.2" },
     { name = "llama-stack-client", specifier = ">=0.2.20" },
     { name = "llama-stack-client", marker = "extra == 'ui'", specifier = ">=0.2.20" },
     { name = "openai", specifier = ">=1.99.6" },
