@@ -6,10 +6,11 @@
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from openai import AsyncOpenAI
+from openai.types.model import Model as OpenAIModel
 
 # Import the real Pydantic response types instead of using Mocks
 from llama_stack.apis.inference import (
@@ -158,7 +159,9 @@ class TestInferenceRecording:
             return real_openai_chat_response
 
         temp_storage_dir = temp_storage_dir / "test_recording_mode"
-        with patch("openai.resources.chat.completions.AsyncCompletions.create", side_effect=mock_create):
+        with patch(
+            "openai.resources.chat.completions.AsyncCompletions.create", new_callable=AsyncMock, side_effect=mock_create
+        ):
             with inference_recording(mode=InferenceMode.RECORD, storage_dir=str(temp_storage_dir)):
                 client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
 
@@ -184,7 +187,9 @@ class TestInferenceRecording:
 
         temp_storage_dir = temp_storage_dir / "test_replay_mode"
         # First, record a response
-        with patch("openai.resources.chat.completions.AsyncCompletions.create", side_effect=mock_create):
+        with patch(
+            "openai.resources.chat.completions.AsyncCompletions.create", new_callable=AsyncMock, side_effect=mock_create
+        ):
             with inference_recording(mode=InferenceMode.RECORD, storage_dir=str(temp_storage_dir)):
                 client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
 
@@ -213,6 +218,42 @@ class TestInferenceRecording:
                 # Verify the original method was NOT called
                 mock_create_patch.assert_not_called()
 
+    async def test_replay_mode_models(self, temp_storage_dir):
+        """Test that replay mode returns stored responses without making real model listing calls."""
+
+        async def _async_iterator(models):
+            for model in models:
+                yield model
+
+        models = [
+            OpenAIModel(id="foo", created=1, object="model", owned_by="test"),
+            OpenAIModel(id="bar", created=2, object="model", owned_by="test"),
+        ]
+
+        expected_ids = {m.id for m in models}
+
+        temp_storage_dir = temp_storage_dir / "test_replay_mode_models"
+
+        # baseline - mock works without recording
+        client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
+        client.models._get_api_list = Mock(return_value=_async_iterator(models))
+        assert {m.id async for m in client.models.list()} == expected_ids
+        client.models._get_api_list.assert_called_once()
+
+        # record the call
+        with inference_recording(mode=InferenceMode.RECORD, storage_dir=temp_storage_dir):
+            client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
+            client.models._get_api_list = Mock(return_value=_async_iterator(models))
+            assert {m.id async for m in client.models.list()} == expected_ids
+            client.models._get_api_list.assert_called_once()
+
+        # replay the call
+        with inference_recording(mode=InferenceMode.REPLAY, storage_dir=temp_storage_dir):
+            client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
+            client.models._get_api_list = Mock(return_value=_async_iterator(models))
+            assert {m.id async for m in client.models.list()} == expected_ids
+            client.models._get_api_list.assert_not_called()
+
     async def test_replay_missing_recording(self, temp_storage_dir):
         """Test that replay mode fails when no recording is found."""
         temp_storage_dir = temp_storage_dir / "test_replay_missing_recording"
@@ -233,7 +274,9 @@ class TestInferenceRecording:
 
         temp_storage_dir = temp_storage_dir / "test_embeddings_recording"
         # Record
-        with patch("openai.resources.embeddings.AsyncEmbeddings.create", side_effect=mock_create):
+        with patch(
+            "openai.resources.embeddings.AsyncEmbeddings.create", new_callable=AsyncMock, side_effect=mock_create
+        ):
             with inference_recording(mode=InferenceMode.RECORD, storage_dir=str(temp_storage_dir)):
                 client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="test")
 
