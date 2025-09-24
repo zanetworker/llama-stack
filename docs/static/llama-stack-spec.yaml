@@ -27,6 +27,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - DatasetIO
+      summary: Append rows to a dataset.
       description: Append rows to a dataset.
       parameters:
         - name: dataset_id
@@ -64,6 +65,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate chat completions for a batch of messages using the specified model.
       description: >-
         Generate chat completions for a batch of messages using the specified model.
       parameters: []
@@ -95,6 +98,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate completions for a batch of content using the specified model.
       description: >-
         Generate completions for a batch of content using the specified model.
       parameters: []
@@ -121,6 +126,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Cancel a training job.
       description: Cancel a training job.
       parameters: []
       requestBody:
@@ -155,6 +161,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - BatchInference (Coming Soon)
+      summary: >-
+        Generate a chat completion for the given messages using the specified model.
       description: >-
         Generate a chat completion for the given messages using the specified model.
       parameters: []
@@ -190,6 +198,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - BatchInference (Coming Soon)
+      summary: >-
+        Generate a completion for the given content using the specified model.
       description: >-
         Generate a completion for the given content using the specified model.
       parameters: []
@@ -220,6 +230,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: List all agents.
       description: List all agents.
       parameters:
         - name: start_index
@@ -255,6 +266,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: >-
+        Create an agent with the given configuration.
       description: >-
         Create an agent with the given configuration.
       parameters: []
@@ -285,6 +298,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Create a new session for an agent.
       description: Create a new session for an agent.
       parameters:
         - name: agent_id
@@ -326,6 +340,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Create a new turn for an agent.
       description: Create a new turn for an agent.
       parameters:
         - name: agent_id
@@ -369,6 +384,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: List all OpenAI responses.
       description: List all OpenAI responses.
       parameters:
         - name: after
@@ -419,6 +435,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Create a new OpenAI response.
       description: Create a new OpenAI response.
       parameters: []
       requestBody:
@@ -449,6 +466,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: List all prompts.
       description: List all prompts.
       parameters: []
     post:
@@ -471,6 +489,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: Create a new prompt.
       description: Create a new prompt.
       parameters: []
       requestBody:
@@ -500,6 +519,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Describe an agent by its ID.
       description: Describe an agent by its ID.
       parameters:
         - name: agent_id
@@ -524,6 +544,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: >-
+        Delete an agent by its ID and its associated sessions and turns.
       description: >-
         Delete an agent by its ID and its associated sessions and turns.
       parameters:
@@ -554,6 +576,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Retrieve an agent session by its ID.
       description: Retrieve an agent session by its ID.
       parameters:
         - name: session_id
@@ -594,6 +617,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: >-
+        Delete an agent session by its ID and its associated turns.
       description: >-
         Delete an agent session by its ID and its associated turns.
       parameters:
@@ -631,6 +656,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Retrieve an OpenAI response by its ID.
       description: Retrieve an OpenAI response by its ID.
       parameters:
         - name: response_id
@@ -660,6 +686,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Delete an OpenAI response by its ID.
       description: Delete an OpenAI response by its ID.
       parameters:
         - name: response_id
@@ -689,6 +716,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: >-
+        Get a prompt by its identifier and optional version.
       description: >-
         Get a prompt by its identifier and optional version.
       parameters:
@@ -726,6 +755,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: >-
+        Update an existing prompt (increments version).
       description: >-
         Update an existing prompt (increments version).
       parameters:
@@ -757,6 +788,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: Delete a prompt.
       description: Delete a prompt.
       parameters:
         - name: prompt_id
@@ -789,6 +821,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate embeddings for content pieces using the specified model.
       description: >-
         Generate embeddings for content pieces using the specified model.
       parameters: []
@@ -820,6 +854,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Eval
+      summary: Evaluate a list of rows on a benchmark.
       description: Evaluate a list of rows on a benchmark.
       parameters:
         - name: benchmark_id
@@ -856,6 +891,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Retrieve an agent step by its ID.
       description: Retrieve an agent step by its ID.
       parameters:
         - name: agent_id
@@ -904,6 +940,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: Retrieve an agent turn by its ID.
       description: Retrieve an agent turn by its ID.
       parameters:
         - name: agent_id
@@ -946,6 +983,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Benchmarks
+      summary: Get a benchmark by its ID.
       description: Get a benchmark by its ID.
       parameters:
         - name: benchmark_id
@@ -970,6 +1008,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Benchmarks
+      summary: Unregister a benchmark.
       description: Unregister a benchmark.
       parameters:
         - name: benchmark_id
@@ -999,6 +1038,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: Describe a chat completion by its ID.
       description: Describe a chat completion by its ID.
       parameters:
         - name: completion_id
@@ -1028,6 +1068,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Datasets
+      summary: Get a dataset by its ID.
       description: Get a dataset by its ID.
       parameters:
         - name: dataset_id
@@ -1052,6 +1093,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Datasets
+      summary: Unregister a dataset by its ID.
       description: Unregister a dataset by its ID.
       parameters:
         - name: dataset_id
@@ -1081,6 +1123,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Models
+      summary: Get a model by its identifier.
       description: Get a model by its identifier.
       parameters:
         - name: model_id
@@ -1105,6 +1148,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Models
+      summary: Unregister a model.
       description: Unregister a model.
       parameters:
         - name: model_id
@@ -1135,6 +1179,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ScoringFunctions
+      summary: Get a scoring function by its ID.
       description: Get a scoring function by its ID.
       parameters:
         - name: scoring_fn_id
@@ -1159,6 +1204,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ScoringFunctions
+      summary: Unregister a scoring function.
       description: Unregister a scoring function.
       parameters:
         - name: scoring_fn_id
@@ -1189,6 +1235,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Shields
+      summary: Get a shield by its identifier.
       description: Get a shield by its identifier.
       parameters:
         - name: identifier
@@ -1213,6 +1260,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Shields
+      summary: Unregister a shield.
       description: Unregister a shield.
       parameters:
         - name: identifier
@@ -1243,6 +1291,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Get a span by its ID.
       description: Get a span by its ID.
       parameters:
         - name: trace_id
@@ -1279,6 +1328,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Get a span tree by its ID.
       description: Get a span tree by its ID.
       parameters:
         - name: span_id
@@ -1314,6 +1364,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: Get a tool by its name.
       description: Get a tool by its name.
       parameters:
         - name: tool_name
@@ -1343,6 +1394,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: Get a tool group by its ID.
       description: Get a tool group by its ID.
       parameters:
         - name: toolgroup_id
@@ -1367,6 +1419,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: Unregister a tool group.
       description: Unregister a tool group.
       parameters:
         - name: toolgroup_id
@@ -1396,6 +1449,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Get a trace by its ID.
       description: Get a trace by its ID.
       parameters:
         - name: trace_id
@@ -1425,6 +1479,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Get the artifacts of a training job.
       description: Get the artifacts of a training job.
       parameters:
         - name: job_uuid
@@ -1455,6 +1510,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Get the status of a training job.
       description: Get the status of a training job.
       parameters:
         - name: job_uuid
@@ -1485,6 +1541,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Get all training jobs.
       description: Get all training jobs.
       parameters: []
   /v1/vector-dbs/{vector_db_id}:
@@ -1508,6 +1565,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorDBs
+      summary: Get a vector database by its identifier.
       description: Get a vector database by its identifier.
       parameters:
         - name: vector_db_id
@@ -1533,6 +1591,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorDBs
+      summary: Unregister a vector database.
       description: Unregister a vector database.
       parameters:
         - name: vector_db_id
@@ -1564,6 +1623,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inspect
+      summary: >-
+        Get the current health status of the service.
       description: >-
         Get the current health status of the service.
       parameters: []
@@ -1584,6 +1645,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolRuntime
+      summary: >-
+        Index documents so they can be used by the RAG system.
       description: >-
         Index documents so they can be used by the RAG system.
       parameters: []
@@ -1610,6 +1673,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Insert chunks into a vector database.
       description: Insert chunks into a vector database.
       parameters: []
       requestBody:
@@ -1640,6 +1704,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Providers
+      summary: >-
+        Get detailed information about a specific provider.
       description: >-
         Get detailed information about a specific provider.
       parameters:
@@ -1670,6 +1736,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolRuntime
+      summary: Run a tool with the given arguments.
       description: Run a tool with the given arguments.
       parameters: []
       requestBody:
@@ -1699,6 +1766,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - DatasetIO
+      summary: >-
+        Get a paginated list of rows from a dataset.
       description: >-
         Get a paginated list of rows from a dataset.
 
@@ -1756,6 +1825,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Eval
+      summary: Get the status of a job.
       description: Get the status of a job.
       parameters:
         - name: benchmark_id
@@ -1787,6 +1857,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Eval
+      summary: Cancel a job.
       description: Cancel a job.
       parameters:
         - name: benchmark_id
@@ -1823,6 +1894,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Eval
+      summary: Get the result of a job.
       description: Get the result of a job.
       parameters:
         - name: benchmark_id
@@ -1859,6 +1931,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: List all session(s) of a given agent.
       description: List all session(s) of a given agent.
       parameters:
         - name: agent_id
@@ -1901,6 +1974,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Benchmarks
+      summary: List all benchmarks.
       description: List all benchmarks.
       parameters: []
     post:
@@ -1919,6 +1993,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Benchmarks
+      summary: Register a benchmark.
       description: Register a benchmark.
       parameters: []
       requestBody:
@@ -1948,6 +2023,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: List all chat completions.
       description: List all chat completions.
       parameters:
         - name: after
@@ -2000,6 +2076,9 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate an OpenAI-compatible chat completion for the given messages using
+        the specified model.
       description: >-
         Generate an OpenAI-compatible chat completion for the given messages using
         the specified model.
@@ -2031,6 +2110,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Datasets
+      summary: List all datasets.
       description: List all datasets.
       parameters: []
     post:
@@ -2053,6 +2133,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Datasets
+      summary: Register a new dataset.
       description: Register a new dataset.
       parameters: []
       requestBody:
@@ -2082,6 +2163,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Models
+      summary: List all models.
       description: List all models.
       parameters: []
     post:
@@ -2104,6 +2186,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Models
+      summary: Register a model.
       description: Register a model.
       parameters: []
       requestBody:
@@ -2133,6 +2216,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: >-
+        List input items for a given OpenAI response.
       description: >-
         List input items for a given OpenAI response.
       parameters:
@@ -2203,6 +2288,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: List all versions of a specific prompt.
       description: List all versions of a specific prompt.
       parameters:
         - name: prompt_id
@@ -2234,6 +2320,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Providers
+      summary: List all available providers.
       description: List all available providers.
       parameters: []
   /v1/inspect/routes:
@@ -2258,6 +2345,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inspect
+      summary: >-
+        List all available API routes with their methods and implementing providers.
       description: >-
         List all available API routes with their methods and implementing providers.
       parameters: []
@@ -2282,6 +2371,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolRuntime
+      summary: List all tools in the runtime.
       description: List all tools in the runtime.
       parameters:
         - name: tool_group_id
@@ -2319,6 +2409,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ScoringFunctions
+      summary: List all scoring functions.
       description: List all scoring functions.
       parameters: []
     post:
@@ -2337,6 +2428,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ScoringFunctions
+      summary: Register a scoring function.
       description: Register a scoring function.
       parameters: []
       requestBody:
@@ -2366,6 +2458,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Shields
+      summary: List all shields.
       description: List all shields.
       parameters: []
     post:
@@ -2388,6 +2481,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Shields
+      summary: Register a shield.
       description: Register a shield.
       parameters: []
       requestBody:
@@ -2417,6 +2511,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: List tool groups with optional provider.
       description: List tool groups with optional provider.
       parameters: []
     post:
@@ -2435,6 +2530,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: Register a tool group.
       description: Register a tool group.
       parameters: []
       requestBody:
@@ -2464,6 +2560,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolGroups
+      summary: List tools with optional tool group.
       description: List tools with optional tool group.
       parameters:
         - name: toolgroup_id
@@ -2494,6 +2591,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorDBs
+      summary: List all vector databases.
       description: List all vector databases.
       parameters: []
     post:
@@ -2516,6 +2614,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorDBs
+      summary: Register a vector database.
       description: Register a vector database.
       parameters: []
       requestBody:
@@ -2541,6 +2640,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Log an event.
       description: Log an event.
       parameters: []
       requestBody:
@@ -2571,6 +2671,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: List files in a vector store.
       description: List files in a vector store.
       parameters:
         - name: vector_store_id
@@ -2641,6 +2742,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Attach a file to a vector store.
       description: Attach a file to a vector store.
       parameters:
         - name: vector_store_id
@@ -2677,6 +2779,9 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate an OpenAI-compatible completion for the given prompt using the specified
+        model.
       description: >-
         Generate an OpenAI-compatible completion for the given prompt using the specified
         model.
@@ -2709,6 +2814,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Returns a list of vector stores.
       description: Returns a list of vector stores.
       parameters:
         - name: limit
@@ -2764,6 +2870,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Creates a vector store.
       description: Creates a vector store.
       parameters: []
       requestBody:
@@ -2794,6 +2901,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Files
+      summary: >-
+        Returns information about a specific file.
       description: >-
         Returns information about a specific file.
       parameters:
@@ -2825,6 +2934,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Files
+      summary: Delete a file.
       description: Delete a file.
       parameters:
         - name: file_id
@@ -2856,6 +2966,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Retrieves a vector store.
       description: Retrieves a vector store.
       parameters:
         - name: vector_store_id
@@ -2885,6 +2996,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Updates a vector store.
       description: Updates a vector store.
       parameters:
         - name: vector_store_id
@@ -2920,6 +3032,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Delete a vector store.
       description: Delete a vector store.
       parameters:
         - name: vector_store_id
@@ -2950,6 +3063,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Retrieves a vector store file.
       description: Retrieves a vector store file.
       parameters:
         - name: vector_store_id
@@ -2986,6 +3100,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Updates a vector store file.
       description: Updates a vector store file.
       parameters:
         - name: vector_store_id
@@ -3028,6 +3143,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Delete a vector store file.
       description: Delete a vector store file.
       parameters:
         - name: vector_store_id
@@ -3065,6 +3181,9 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Generate OpenAI-compatible embeddings for the given input using the specified
+        model.
       description: >-
         Generate OpenAI-compatible embeddings for the given input using the specified
         model.
@@ -3097,6 +3216,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Files
+      summary: >-
+        Returns a list of files that belong to the user's organization.
       description: >-
         Returns a list of files that belong to the user's organization.
       parameters:
@@ -3154,6 +3275,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Files
+      summary: >-
+        Upload a file that can be used across various endpoints.
       description: >-
         Upload a file that can be used across various endpoints.
 
@@ -3213,6 +3336,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Models
+      summary: List models using the OpenAI API.
       description: List models using the OpenAI API.
       parameters: []
   /v1/openai/v1/files/{file_id}/content:
@@ -3237,6 +3361,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Files
+      summary: >-
+        Returns the contents of the specified file.
       description: >-
         Returns the contents of the specified file.
       parameters:
@@ -3269,6 +3395,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: >-
+        Retrieves the contents of a vector store file.
       description: >-
         Retrieves the contents of a vector store file.
       parameters:
@@ -3307,6 +3435,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Search for chunks in a vector store.
       description: >-
         Search for chunks in a vector store.
 
@@ -3346,6 +3475,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Run preference optimization of a model.
       description: Run preference optimization of a model.
       parameters: []
       requestBody:
@@ -3376,6 +3506,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - ToolRuntime
+      summary: >-
+        Query the RAG system for context; typically invoked by the agent.
       description: >-
         Query the RAG system for context; typically invoked by the agent.
       parameters: []
@@ -3406,6 +3538,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - VectorIO
+      summary: Query chunks from a vector database.
       description: Query chunks from a vector database.
       parameters: []
       requestBody:
@@ -3435,6 +3568,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Query metrics.
       description: Query metrics.
       parameters:
         - name: metric_name
@@ -3470,6 +3604,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Query spans.
       description: Query spans.
       parameters: []
       requestBody:
@@ -3499,6 +3634,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Query traces.
       description: Query traces.
       parameters: []
       requestBody:
@@ -3529,6 +3665,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inference
+      summary: >-
+        Rerank a list of documents based on their relevance to a query.
       description: >-
         Rerank a list of documents based on their relevance to a query.
       parameters: []
@@ -3564,6 +3702,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Agents
+      summary: >-
+        Resume an agent turn with executed tool call responses.
       description: >-
         Resume an agent turn with executed tool call responses.
 
@@ -3617,6 +3757,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Eval
+      summary: Run an evaluation on a benchmark.
       description: Run an evaluation on a benchmark.
       parameters:
         - name: benchmark_id
@@ -3653,6 +3794,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Safety
+      summary: >-
+        Classifies if text and/or image inputs are potentially harmful.
       description: >-
         Classifies if text and/or image inputs are potentially harmful.
       parameters: []
@@ -3683,6 +3826,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Safety
+      summary: Run a shield.
       description: Run a shield.
       parameters: []
       requestBody:
@@ -3708,6 +3852,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Telemetry
+      summary: Save spans to a dataset.
       description: Save spans to a dataset.
       parameters: []
       requestBody:
@@ -3738,6 +3883,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Scoring
+      summary: Score a list of rows.
       description: Score a list of rows.
       parameters: []
       requestBody:
@@ -3767,6 +3913,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Scoring
+      summary: Score a batch of rows.
       description: Score a batch of rows.
       parameters: []
       requestBody:
@@ -3797,6 +3944,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Prompts
+      summary: >-
+        Set which version of a prompt should be the default in get_prompt (latest).
       description: >-
         Set which version of a prompt should be the default in get_prompt (latest).
       parameters:
@@ -3833,6 +3982,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - PostTraining (Coming Soon)
+      summary: Run supervised fine-tuning of a model.
       description: Run supervised fine-tuning of a model.
       parameters: []
       requestBody:
@@ -3863,6 +4013,8 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - SyntheticDataGeneration (Coming Soon)
+      summary: >-
+        Generate synthetic data based on input dialogs and apply filtering.
       description: >-
         Generate synthetic data based on input dialogs and apply filtering.
       parameters: []
@@ -3894,6 +4046,7 @@ paths:
           $ref: '#/components/responses/DefaultError'
       tags:
         - Inspect
+      summary: Get the version of the service.
       description: Get the version of the service.
       parameters: []
 jsonSchemaDialect: >-
