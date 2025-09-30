@@ -111,9 +111,7 @@ class Files(Protocol):
         self,
         file: Annotated[UploadFile, File()],
         purpose: Annotated[OpenAIFilePurpose, Form()],
-        expires_after_anchor: Annotated[str | None, Form(alias="expires_after[anchor]")] = None,
-        expires_after_seconds: Annotated[int | None, Form(alias="expires_after[seconds]")] = None,
-        # TODO: expires_after is producing strange openapi spec, params are showing up as a required w/ oneOf being null
+        expires_after: Annotated[ExpiresAfter | None, Form()] = None,
     ) -> OpenAIFileObject:
         """
         Upload a file that can be used across various endpoints.
@@ -121,10 +119,11 @@ class Files(Protocol):
         The file upload should be a multipart form request with:
         - file: The File object (not file name) to be uploaded.
         - purpose: The intended purpose of the uploaded file.
-        - expires_after: Optional form values describing expiration for the file. Expected expires_after[anchor] = "created_at", expires_after[seconds] = {integer}. Seconds must be between 3600 and 2592000 (1 hour to 30 days).
+        - expires_after: Optional form values describing expiration for the file.
 
         :param file: The uploaded file object containing content and metadata (filename, content_type, etc.).
         :param purpose: The intended purpose of the uploaded file (e.g., "assistants", "fine-tune").
+        :param expires_after: Optional form values describing expiration for the file.
         :returns: An OpenAIFileObject representing the uploaded file.
         """
         ...
