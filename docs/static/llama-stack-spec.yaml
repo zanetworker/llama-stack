@@ -9197,8 +9197,84 @@ tags:
   - name: Agents
     description: >-
       APIs for creating and interacting with agentic systems.
+
+
+      ## Responses API
+
+
+      The Responses API provides OpenAI-compatible functionality with enhanced capabilities
+      for dynamic, stateful interactions.
+
+
+      > **✅ STABLE**: This API is production-ready with backward compatibility guarantees.
+      Recommended for production applications.
+
+
+      ### ✅ Supported Tools
+
+
+      The Responses API supports the following tool types:
+
+
+      - **`web_search`**: Search the web for current information and real-time data
+
+      - **`file_search`**: Search through uploaded files and vector stores
+        - Supports dynamic `vector_store_ids` per call
+        - Compatible with OpenAI file search patterns
+      - **`function`**: Call custom functions with JSON schema validation
+
+      - **`mcp_tool`**: Model Context Protocol integration
+
+
+      ### ✅ Supported Fields & Features
+
+
+      **Core Capabilities:**
+
+      - **Dynamic Configuration**: Switch models, vector stores, and tools per request
+      without pre-configuration
+
+      - **Conversation Branching**: Use `previous_response_id` to branch conversations
+      and explore different paths
+
+      - **Rich Annotations**: Automatic file citations, URL citations, and container
+      file citations
+
+      - **Status Tracking**: Monitor tool call execution status and handle failures
+      gracefully
+
+
+      ### 🚧 Work in Progress
+
+
+      - Full real-time response streaming support
+
+      - `tool_choice` parameter
+
+      - `max_tool_calls` parameter
+
+      - Built-in tools (code interpreter, containers API)
+
+      - Safety & guardrails
+
+      - `reasoning` capabilities
+
+      - `service_tier`
+
+      - `logprobs`
+
+      - `max_output_tokens`
+
+      - `metadata` handling
+
+      - `instructions`
+
+      - `incomplete_details`
+
+      - `background`
     x-displayName: Agents
   - name: Files
+    description: ''
   - name: Inference
     description: >-
       This API provides the raw interface to the underlying models. Two kinds of models
@@ -9212,23 +9288,37 @@ tags:
       Llama Stack Inference API for generating completions, chat completions, and
       embeddings.
   - name: Inspect
+    description: ''
   - name: Models
+    description: ''
   - name: Prompts
+    description: ''
     x-displayName: >-
       Protocol for prompt management operations.
   - name: Providers
+    description: ''
     x-displayName: >-
       Providers API for inspecting, listing, and modifying providers and their configurations.
   - name: Safety
+    description: ''
   - name: Scoring
+    description: ''
   - name: ScoringFunctions
+    description: ''
   - name: Shields
+    description: ''
   - name: SyntheticDataGeneration (Coming Soon)
+    description: ''
   - name: Telemetry
+    description: ''
   - name: ToolGroups
+    description: ''
   - name: ToolRuntime
+    description: ''
   - name: VectorDBs
+    description: ''
   - name: VectorIO
+    description: ''
 x-tagGroups:
   - name: Operations
     tags:

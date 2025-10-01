@@ -12372,11 +12372,12 @@
     "tags": [
         {
             "name": "Agents",
-            "description": "APIs for creating and interacting with agentic systems.",
+            "description": "APIs for creating and interacting with agentic systems.\n\n## Responses API\n\nThe Responses API provides OpenAI-compatible functionality with enhanced capabilities for dynamic, stateful interactions.\n\n> **✅ STABLE**: This API is production-ready with backward compatibility guarantees. Recommended for production applications.\n\n### ✅ Supported Tools\n\nThe Responses API supports the following tool types:\n\n- **`web_search`**: Search the web for current information and real-time data\n- **`file_search`**: Search through uploaded files and vector stores\n  - Supports dynamic `vector_store_ids` per call\n  - Compatible with OpenAI file search patterns\n- **`function`**: Call custom functions with JSON schema validation\n- **`mcp_tool`**: Model Context Protocol integration\n\n### ✅ Supported Fields & Features\n\n**Core Capabilities:**\n- **Dynamic Configuration**: Switch models, vector stores, and tools per request without pre-configuration\n- **Conversation Branching**: Use `previous_response_id` to branch conversations and explore different paths\n- **Rich Annotations**: Automatic file citations, URL citations, and container file citations\n- **Status Tracking**: Monitor tool call execution status and handle failures gracefully\n\n### 🚧 Work in Progress\n\n- Full real-time response streaming support\n- `tool_choice` parameter\n- `max_tool_calls` parameter\n- Built-in tools (code interpreter, containers API)\n- Safety & guardrails\n- `reasoning` capabilities\n- `service_tier`\n- `logprobs`\n- `max_output_tokens`\n- `metadata` handling\n- `instructions`\n- `incomplete_details`\n- `background`",
             "x-displayName": "Agents"
         },
         {
-            "name": "Files"
+            "name": "Files",
+            "description": ""
         },
         {
             "name": "Inference",
@@ -12384,48 +12385,62 @@
             "x-displayName": "Llama Stack Inference API for generating completions, chat completions, and embeddings."
         },
         {
-            "name": "Inspect"
+            "name": "Inspect",
+            "description": ""
         },
         {
-            "name": "Models"
+            "name": "Models",
+            "description": ""
         },
         {
             "name": "Prompts",
+            "description": "",
             "x-displayName": "Protocol for prompt management operations."
         },
         {
             "name": "Providers",
+            "description": "",
             "x-displayName": "Providers API for inspecting, listing, and modifying providers and their configurations."
         },
         {
-            "name": "Safety"
+            "name": "Safety",
+            "description": ""
         },
         {
-            "name": "Scoring"
+            "name": "Scoring",
+            "description": ""
         },
         {
-            "name": "ScoringFunctions"
+            "name": "ScoringFunctions",
+            "description": ""
         },
         {
-            "name": "Shields"
+            "name": "Shields",
+            "description": ""
         },
         {
-            "name": "SyntheticDataGeneration (Coming Soon)"
+            "name": "SyntheticDataGeneration (Coming Soon)",
+            "description": ""
         },
         {
-            "name": "Telemetry"
+            "name": "Telemetry",
+            "description": ""
         },
         {
-            "name": "ToolGroups"
+            "name": "ToolGroups",
+            "description": ""
         },
         {
-            "name": "ToolRuntime"
+            "name": "ToolRuntime",
+            "description": ""
         },
         {
-            "name": "VectorDBs"
+            "name": "VectorDBs",
+            "description": ""
         },
         {
-            "name": "VectorIO"
+            "name": "VectorIO",
+            "description": ""
         }
     ],
     "x-tagGroups": [
