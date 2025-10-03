@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Check comment author
         id: check_author
-        uses: actions/github-script@b72609b8d3f6598eef55e8f8010b7cba8b9ff9c5 # v7.0.1
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -77,7 +77,7 @@ jobs:
 
       - name: React to comment
         if: steps.check_author.outputs.authorized == 'true'
-        uses: actions/github-script@b72609b8d3f6598eef55e8f8010b7cba8b9ff9c5 # v7.0.1
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -90,7 +90,7 @@ jobs:
 
       - name: Trigger execution workflow
         if: steps.check_author.outputs.authorized == 'true'
-        uses: actions/github-script@b72609b8d3f6598eef55e8f8010b7cba8b9ff9c5 # v7.0.1
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
