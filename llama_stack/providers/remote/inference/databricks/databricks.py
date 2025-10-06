@@ -9,10 +9,7 @@ from typing import Any
 
 from databricks.sdk import WorkspaceClient
 
-from llama_stack.apis.inference import (
-    Inference,
-    OpenAICompletion,
-)
+from llama_stack.apis.inference import OpenAICompletion
 from llama_stack.log import get_logger
 from llama_stack.providers.utils.inference.openai_mixin import OpenAIMixin
 
@@ -21,18 +18,14 @@ from .config import DatabricksImplConfig
 logger = get_logger(name=__name__, category="inference::databricks")
 
 
-class DatabricksInferenceAdapter(
-    OpenAIMixin,
-    Inference,
-):
+class DatabricksInferenceAdapter(OpenAIMixin):
+    config: DatabricksImplConfig
+
     # source: https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/supported-models
-    embedding_model_metadata = {
+    embedding_model_metadata: dict[str, dict[str, int]] = {
         "databricks-gte-large-en": {"embedding_dimension": 1024, "context_length": 8192},
         "databricks-bge-large-en": {"embedding_dimension": 1024, "context_length": 512},
     }
-
-    def __init__(self, config: DatabricksImplConfig) -> None:
-        self.config = config
 
     def get_api_key(self) -> str:
         return self.config.api_token.get_secret_value()
@@ -40,11 +33,16 @@ class DatabricksInferenceAdapter(
     def get_base_url(self) -> str:
         return f"{self.config.url}/serving-endpoints"
 
-    async def initialize(self) -> None:
-        return
+    async def list_provider_model_ids(self) -> Iterable[str]:
+        return [
+            endpoint.name
+            for endpoint in WorkspaceClient(
+                host=self.config.url, token=self.get_api_key()
+            ).serving_endpoints.list()  # TODO: this is not async
+        ]
 
-    async def shutdown(self) -> None:
-        pass
+    async def should_refresh_models(self) -> bool:
+        return False
 
     async def openai_completion(
         self,
@@ -70,14 +68,3 @@ class DatabricksInferenceAdapter(
         suffix: str | None = None,
     ) -> OpenAICompletion:
         raise NotImplementedError()
-
-    async def list_provider_model_ids(self) -> Iterable[str]:
-        return [
-            endpoint.name
-            for endpoint in WorkspaceClient(
-                host=self.config.url, token=self.get_api_key()
-            ).serving_endpoints.list()  # TODO: this is not async
-        ]
-
-    async def should_refresh_models(self) -> bool:
-        return False

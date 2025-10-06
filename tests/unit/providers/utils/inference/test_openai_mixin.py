@@ -6,6 +6,7 @@
 
 import json
 from collections.abc import Iterable
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, patch
 
 import pytest
@@ -14,6 +15,7 @@ from pydantic import BaseModel, Field
 from llama_stack.apis.inference import Model, OpenAIUserMessageParam
 from llama_stack.apis.models import ModelType
 from llama_stack.core.request_headers import request_provider_data_context
+from llama_stack.providers.utils.inference.model_registry import RemoteInferenceProviderConfig
 from llama_stack.providers.utils.inference.openai_mixin import OpenAIMixin
 
 
@@ -30,7 +32,7 @@ class OpenAIMixinImpl(OpenAIMixin):
 class OpenAIMixinWithEmbeddingsImpl(OpenAIMixinImpl):
     """Test implementation with embedding model metadata"""
 
-    embedding_model_metadata = {
+    embedding_model_metadata: dict[str, dict[str, int]] = {
         "text-embedding-3-small": {"embedding_dimension": 1536, "context_length": 8192},
         "text-embedding-ada-002": {"embedding_dimension": 1536, "context_length": 8192},
     }
@@ -39,7 +41,8 @@ class OpenAIMixinWithEmbeddingsImpl(OpenAIMixinImpl):
 @pytest.fixture
 def mixin():
     """Create a test instance of OpenAIMixin with mocked model_store"""
-    mixin_instance = OpenAIMixinImpl()
+    config = RemoteInferenceProviderConfig()
+    mixin_instance = OpenAIMixinImpl(config=config)
 
     # just enough to satisfy _get_provider_model_id calls
     mock_model_store = MagicMock()
@@ -54,7 +57,8 @@ def mixin():
 @pytest.fixture
 def mixin_with_embeddings():
     """Create a test instance of OpenAIMixin with embedding model metadata"""
-    return OpenAIMixinWithEmbeddingsImpl()
+    config = RemoteInferenceProviderConfig()
+    return OpenAIMixinWithEmbeddingsImpl(config=config)
 
 
 @pytest.fixture
@@ -502,12 +506,11 @@ class OpenAIMixinWithProviderData(OpenAIMixinImpl):
 class CustomListProviderModelIdsImplementation(OpenAIMixinImpl):
     """Test implementation with custom list_provider_model_ids override"""
 
-    def __init__(self, custom_model_ids):
-        self._custom_model_ids = custom_model_ids
+    custom_model_ids: Any
 
     async def list_provider_model_ids(self) -> Iterable[str]:
         """Return custom model IDs list"""
-        return self._custom_model_ids
+        return self.custom_model_ids
 
 
 class TestOpenAIMixinCustomListProviderModelIds:
@@ -519,9 +522,14 @@ class TestOpenAIMixinCustomListProviderModelIds:
         return ["custom-model-1", "custom-model-2", "custom-embedding"]
 
     @pytest.fixture
-    def adapter(self, custom_model_ids_list):
+    def config(self):
+        """Create RemoteInferenceProviderConfig instance"""
+        return RemoteInferenceProviderConfig()
+
+    @pytest.fixture
+    def adapter(self, custom_model_ids_list, config):
         """Create mixin instance with custom list_provider_model_ids implementation"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=custom_model_ids_list)
+        mixin = CustomListProviderModelIdsImplementation(config=config, custom_model_ids=custom_model_ids_list)
         mixin.embedding_model_metadata = {"custom-embedding": {"embedding_dimension": 768, "context_length": 512}}
         return mixin
 
@@ -542,9 +550,11 @@ class TestOpenAIMixinCustomListProviderModelIds:
 
         assert set(custom_model_ids_list) == set(adapter._model_cache.keys())
 
-    async def test_respects_allowed_models(self):
+    async def test_respects_allowed_models(self, config):
         """Test that custom list_provider_model_ids() respects allowed_models filtering"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=["model-1", "model-2", "model-3"])
+        mixin = CustomListProviderModelIdsImplementation(
+            config=config, custom_model_ids=["model-1", "model-2", "model-3"]
+        )
         mixin.allowed_models = ["model-1"]
 
         result = await mixin.list_models()
@@ -553,9 +563,9 @@ class TestOpenAIMixinCustomListProviderModelIds:
         assert len(result) == 1
         assert result[0].identifier == "model-1"
 
-    async def test_with_empty_list(self):
+    async def test_with_empty_list(self, config):
         """Test that custom list_provider_model_ids() handles empty list correctly"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[])
+        mixin = CustomListProviderModelIdsImplementation(config=config, custom_model_ids=[])
 
         result = await mixin.list_models()
 
@@ -563,16 +573,31 @@ class TestOpenAIMixinCustomListProviderModelIds:
         assert len(result) == 0
         assert len(mixin._model_cache) == 0
 
-    async def test_wrong_type_raises_error(self):
+    async def test_wrong_type_raises_error(self, config):
         """Test that list_provider_model_ids() returning unhashable items results in an error"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[["nested", "list"], {"key": "value"}])
-
-        with pytest.raises(TypeError, match="unhashable type"):
+        mixin = CustomListProviderModelIdsImplementation(
+            config=config, custom_model_ids=["valid-model", ["nested", "list"]]
+        )
+        with pytest.raises(Exception, match="is not a string"):
             await mixin.list_models()
 
-    async def test_non_iterable_raises_error(self):
+        mixin = CustomListProviderModelIdsImplementation(
+            config=config, custom_model_ids=[{"key": "value"}, "valid-model"]
+        )
+        with pytest.raises(Exception, match="is not a string"):
+            await mixin.list_models()
+
+        mixin = CustomListProviderModelIdsImplementation(config=config, custom_model_ids=["valid-model", 42.0])
+        with pytest.raises(Exception, match="is not a string"):
+            await mixin.list_models()
+
+        mixin = CustomListProviderModelIdsImplementation(config=config, custom_model_ids=[None])
+        with pytest.raises(Exception, match="is not a string"):
+            await mixin.list_models()
+
+    async def test_non_iterable_raises_error(self, config):
         """Test that list_provider_model_ids() returning non-iterable type raises error"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=42)
+        mixin = CustomListProviderModelIdsImplementation(config=config, custom_model_ids=42)
 
         with pytest.raises(
             TypeError,
@@ -580,44 +605,31 @@ class TestOpenAIMixinCustomListProviderModelIds:
         ):
             await mixin.list_models()
 
-    async def test_with_none_items_raises_error(self):
-        """Test that list_provider_model_ids() returning list with None items causes error"""
-        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[None, "valid-model", None])
-
-        with pytest.raises(Exception, match="Input should be a valid string"):
-            await mixin.list_models()
-
-    async def test_accepts_various_iterables(self):
+    async def test_accepts_various_iterables(self, config):
         """Test that list_provider_model_ids() accepts tuples, sets, generators, etc."""
 
-        class TupleAdapter(OpenAIMixinImpl):
-            async def list_provider_model_ids(self) -> Iterable[str] | None:
-                return ("model-1", "model-2", "model-3")
-
-        mixin = TupleAdapter()
-        result = await mixin.list_models()
+        tuples = CustomListProviderModelIdsImplementation(
+            config=config, custom_model_ids=("model-1", "model-2", "model-3")
+        )
+        result = await tuples.list_models()
         assert result is not None
         assert len(result) == 3
 
         class GeneratorAdapter(OpenAIMixinImpl):
-            async def list_provider_model_ids(self) -> Iterable[str] | None:
+            async def list_provider_model_ids(self) -> Iterable[str]:
                 def gen():
                     yield "gen-model-1"
                     yield "gen-model-2"
 
                 return gen()
 
-        mixin = GeneratorAdapter()
+        mixin = GeneratorAdapter(config=config)
         result = await mixin.list_models()
         assert result is not None
         assert len(result) == 2
 
-        class SetAdapter(OpenAIMixinImpl):
-            async def list_provider_model_ids(self) -> Iterable[str] | None:
-                return {"set-model-1", "set-model-2"}
-
-        mixin = SetAdapter()
-        result = await mixin.list_models()
+        sets = CustomListProviderModelIdsImplementation(config=config, custom_model_ids={"set-model-1", "set-model-2"})
+        result = await sets.list_models()
         assert result is not None
         assert len(result) == 2
 
@@ -628,7 +640,8 @@ class TestOpenAIMixinProviderDataApiKey:
     @pytest.fixture
     def mixin_with_provider_data_field(self):
         """Mixin instance with provider_data_api_key_field set"""
-        mixin_instance = OpenAIMixinWithProviderData()
+        config = RemoteInferenceProviderConfig()
+        mixin_instance = OpenAIMixinWithProviderData(config=config)
 
         # Mock provider_spec for provider data validation
         mock_provider_spec = MagicMock()
