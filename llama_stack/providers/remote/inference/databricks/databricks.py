@@ -4,16 +4,15 @@
 # This source code is licensed under the terms described in the LICENSE file in
 # the root directory of this source tree.
 
+from collections.abc import Iterable
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
 
 from llama_stack.apis.inference import (
     Inference,
-    Model,
     OpenAICompletion,
 )
-from llama_stack.apis.models import ModelType
 from llama_stack.log import get_logger
 from llama_stack.providers.utils.inference.openai_mixin import OpenAIMixin
 
@@ -72,31 +71,13 @@ class DatabricksInferenceAdapter(
     ) -> OpenAICompletion:
         raise NotImplementedError()
 
-    async def list_models(self) -> list[Model] | None:
-        self._model_cache = {}  # from OpenAIMixin
-        ws_client = WorkspaceClient(host=self.config.url, token=self.get_api_key())  # TODO: this is not async
-        endpoints = ws_client.serving_endpoints.list()
-        for endpoint in endpoints:
-            model = Model(
-                provider_id=self.__provider_id__,
-                provider_resource_id=endpoint.name,
-                identifier=endpoint.name,
-            )
-            if endpoint.task == "llm/v1/chat":
-                model.model_type = ModelType.llm  # this is redundant, but informative
-            elif endpoint.task == "llm/v1/embeddings":
-                if endpoint.name not in self.embedding_model_metadata:
-                    logger.warning(f"No metadata information available for embedding model {endpoint.name}, skipping.")
-                    continue
-                model.model_type = ModelType.embedding
-                model.metadata = self.embedding_model_metadata[endpoint.name]
-            else:
-                logger.warning(f"Unknown model type, skipping: {endpoint}")
-                continue
-
-            self._model_cache[endpoint.name] = model
-
-        return list(self._model_cache.values())
+    async def list_provider_model_ids(self) -> Iterable[str]:
+        return [
+            endpoint.name
+            for endpoint in WorkspaceClient(
+                host=self.config.url, token=self.get_api_key()
+            ).serving_endpoints.list()  # TODO: this is not async
+        ]
 
     async def should_refresh_models(self) -> bool:
         return False

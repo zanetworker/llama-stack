@@ -5,6 +5,7 @@
 # the root directory of this source tree.
 
 import json
+from collections.abc import Iterable
 from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, patch
 
 import pytest
@@ -496,6 +497,129 @@ class OpenAIMixinWithProviderData(OpenAIMixinImpl):
 
     def get_base_url(self):
         return "default-base-url"
+
+
+class CustomListProviderModelIdsImplementation(OpenAIMixinImpl):
+    """Test implementation with custom list_provider_model_ids override"""
+
+    def __init__(self, custom_model_ids):
+        self._custom_model_ids = custom_model_ids
+
+    async def list_provider_model_ids(self) -> Iterable[str]:
+        """Return custom model IDs list"""
+        return self._custom_model_ids
+
+
+class TestOpenAIMixinCustomListProviderModelIds:
+    """Test cases for custom list_provider_model_ids() implementation functionality"""
+
+    @pytest.fixture
+    def custom_model_ids_list(self):
+        """Create a list of custom model ID strings"""
+        return ["custom-model-1", "custom-model-2", "custom-embedding"]
+
+    @pytest.fixture
+    def adapter(self, custom_model_ids_list):
+        """Create mixin instance with custom list_provider_model_ids implementation"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=custom_model_ids_list)
+        mixin.embedding_model_metadata = {"custom-embedding": {"embedding_dimension": 768, "context_length": 512}}
+        return mixin
+
+    async def test_is_used(self, adapter, custom_model_ids_list):
+        """Test that custom list_provider_model_ids() implementation is used instead of client.models.list()"""
+        result = await adapter.list_models()
+
+        assert result is not None
+        assert len(result) == 3
+
+        assert set(custom_model_ids_list) == {m.identifier for m in result}
+
+    async def test_populates_cache(self, adapter, custom_model_ids_list):
+        """Test that custom list_provider_model_ids() results are cached"""
+        assert len(adapter._model_cache) == 0
+
+        await adapter.list_models()
+
+        assert set(custom_model_ids_list) == set(adapter._model_cache.keys())
+
+    async def test_respects_allowed_models(self):
+        """Test that custom list_provider_model_ids() respects allowed_models filtering"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=["model-1", "model-2", "model-3"])
+        mixin.allowed_models = ["model-1"]
+
+        result = await mixin.list_models()
+
+        assert result is not None
+        assert len(result) == 1
+        assert result[0].identifier == "model-1"
+
+    async def test_with_empty_list(self):
+        """Test that custom list_provider_model_ids() handles empty list correctly"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[])
+
+        result = await mixin.list_models()
+
+        assert result is not None
+        assert len(result) == 0
+        assert len(mixin._model_cache) == 0
+
+    async def test_wrong_type_raises_error(self):
+        """Test that list_provider_model_ids() returning unhashable items results in an error"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[["nested", "list"], {"key": "value"}])
+
+        with pytest.raises(TypeError, match="unhashable type"):
+            await mixin.list_models()
+
+    async def test_non_iterable_raises_error(self):
+        """Test that list_provider_model_ids() returning non-iterable type raises error"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=42)
+
+        with pytest.raises(
+            TypeError,
+            match=r"Failed to list models: CustomListProviderModelIdsImplementation\.list_provider_model_ids\(\) must return an iterable.*but returned int",
+        ):
+            await mixin.list_models()
+
+    async def test_with_none_items_raises_error(self):
+        """Test that list_provider_model_ids() returning list with None items causes error"""
+        mixin = CustomListProviderModelIdsImplementation(custom_model_ids=[None, "valid-model", None])
+
+        with pytest.raises(Exception, match="Input should be a valid string"):
+            await mixin.list_models()
+
+    async def test_accepts_various_iterables(self):
+        """Test that list_provider_model_ids() accepts tuples, sets, generators, etc."""
+
+        class TupleAdapter(OpenAIMixinImpl):
+            async def list_provider_model_ids(self) -> Iterable[str] | None:
+                return ("model-1", "model-2", "model-3")
+
+        mixin = TupleAdapter()
+        result = await mixin.list_models()
+        assert result is not None
+        assert len(result) == 3
+
+        class GeneratorAdapter(OpenAIMixinImpl):
+            async def list_provider_model_ids(self) -> Iterable[str] | None:
+                def gen():
+                    yield "gen-model-1"
+                    yield "gen-model-2"
+
+                return gen()
+
+        mixin = GeneratorAdapter()
+        result = await mixin.list_models()
+        assert result is not None
+        assert len(result) == 2
+
+        class SetAdapter(OpenAIMixinImpl):
+            async def list_provider_model_ids(self) -> Iterable[str] | None:
+                return {"set-model-1", "set-model-2"}
+
+        mixin = SetAdapter()
+        result = await mixin.list_models()
+        assert result is not None
+        assert len(result) == 2
 
 
 class TestOpenAIMixinProviderDataApiKey:
