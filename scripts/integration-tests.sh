@@ -30,7 +30,7 @@ Options:
     --stack-config STRING    Stack configuration to use (required)
     --suite STRING           Test suite to run (default: 'base')
     --setup STRING           Test setup (models, env) to use (e.g., 'ollama', 'ollama-vision', 'gpt', 'vllm')
-    --inference-mode STRING  Inference mode: record or replay (default: replay)
+    --inference-mode STRING  Inference mode: replay, record-if-missing or record (default: replay)
     --subdirs STRING         Comma-separated list of test subdirectories to run (overrides suite)
     --pattern STRING         Regex pattern to pass to pytest -k
     --collect-only           Collect tests only without running them (skips server startup)
