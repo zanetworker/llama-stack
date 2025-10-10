@@ -77,6 +77,20 @@ class VLLMInferenceAdapter(OpenAIMixin):
     def get_extra_client_params(self):
         return {"http_client": httpx.AsyncClient(verify=self.config.tls_verify)}
 
+    async def check_model_availability(self, model: str) -> bool:
+        """
+        Skip the check when running without authentication.
+        """
+        if not self.config.api_token:
+            model_ids = []
+            async for m in self.client.models.list():
+                if m.id == model:  # Found exact match
+                    return True
+                model_ids.append(m.id)
+            raise ValueError(f"Model '{model}' not found. Available models: {model_ids}")
+        log.warning(f"Not checking model availability for {model} as API token may trigger OAuth workflow")
+        return True
+
     async def openai_chat_completion(
         self,
         model: str,
