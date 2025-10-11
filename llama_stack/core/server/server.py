@@ -273,9 +273,7 @@ def create_dynamic_typed_route(func: Any, method: str, route: str) -> Callable:
                     context_vars = [CURRENT_TRACE_CONTEXT, PROVIDER_DATA_VAR]
                     if test_context_var is not None:
                         context_vars.append(test_context_var)
-                    gen = preserve_contexts_async_generator(
-                        sse_generator(func(**kwargs)), context_vars
-                    )
+                    gen = preserve_contexts_async_generator(sse_generator(func(**kwargs)), context_vars)
                     return StreamingResponse(gen, media_type="text/event-stream")
                 else:
                     value = func(**kwargs)
