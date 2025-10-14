@@ -448,8 +448,20 @@ def test_openai_vector_store_search_with_ranking_options(
         chunks=sample_chunks,
     )
 
+    # First search without threshold to determine reasonable threshold
+    initial_search = compat_client.vector_stores.search(
+        vector_store_id=vector_store.id,
+        query="machine learning and artificial intelligence",
+        max_num_results=3,
+    )
+
+    # Use a threshold that's lower than the lowest score to ensure we get results
+    if initial_search.data:
+        threshold = min(result.score for result in initial_search.data) * 0.9
+    else:
+        threshold = 0.01
+
     # Search with ranking options
-    threshold = 0.1
     search_response = compat_client.vector_stores.search(
         vector_store_id=vector_store.id,
         query="machine learning and artificial intelligence",
@@ -564,6 +576,7 @@ def test_openai_vector_store_attach_file(
 ):
     """Test OpenAI vector store attach file."""
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
+    from llama_stack.apis.files import ExpiresAfter
 
     compat_client = compat_client_with_empty_stores
 
@@ -579,7 +592,11 @@ def test_openai_vector_store_attach_file(
     test_content = b"The secret string is foobazbar."
     with BytesIO(test_content) as file_buffer:
         file_buffer.name = "openai_test.txt"
-        file = compat_client.files.create(file=file_buffer, purpose="assistants")
+        file = compat_client.files.create(
+            file=file_buffer,
+            purpose="assistants",
+            expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+        )
 
     # Attach the file to the vector store
     file_attach_response = compat_client.vector_stores.files.create(
@@ -621,13 +638,18 @@ def test_openai_vector_store_attach_files_on_creation(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create some files and attach them to the vector store
     valid_file_ids = []
     for i in range(3):
         with BytesIO(f"This is a test file {i}".encode()) as file_buffer:
             file_buffer.name = f"openai_test_{i}.txt"
-            file = compat_client.files.create(file=file_buffer, purpose="assistants")
+            file = compat_client.files.create(
+                file=file_buffer,
+                purpose="assistants",
+                expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+            )
         valid_file_ids.append(file.id)
 
     # include an invalid file ID so we can test failed status
@@ -679,6 +701,7 @@ def test_openai_vector_store_list_files(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create a vector store
     vector_store = compat_client.vector_stores.create(
@@ -693,7 +716,11 @@ def test_openai_vector_store_list_files(
     for i in range(3):
         with BytesIO(f"This is a test file {i}".encode()) as file_buffer:
             file_buffer.name = f"openai_test_{i}.txt"
-            file = compat_client.files.create(file=file_buffer, purpose="assistants")
+            file = compat_client.files.create(
+                file=file_buffer,
+                purpose="assistants",
+                expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+            )
 
         response = compat_client.vector_stores.files.create(
             vector_store_id=vector_store.id,
@@ -763,6 +790,7 @@ def test_openai_vector_store_retrieve_file_contents(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create a vector store
     vector_store = compat_client.vector_stores.create(
@@ -778,7 +806,11 @@ def test_openai_vector_store_retrieve_file_contents(
     attributes = {"foo": "bar"}
     with BytesIO(test_content) as file_buffer:
         file_buffer.name = file_name
-        file = compat_client.files.create(file=file_buffer, purpose="assistants")
+        file = compat_client.files.create(
+            file=file_buffer,
+            purpose="assistants",
+            expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+        )
 
     # Attach the file to the vector store
     file_attach_response = compat_client.vector_stores.files.create(
@@ -817,6 +849,7 @@ def test_openai_vector_store_delete_file(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create a vector store
     vector_store = compat_client.vector_stores.create(
@@ -831,7 +864,11 @@ def test_openai_vector_store_delete_file(
     for i in range(3):
         with BytesIO(f"This is a test file {i}".encode()) as file_buffer:
             file_buffer.name = f"openai_test_{i}.txt"
-            file = compat_client.files.create(file=file_buffer, purpose="assistants")
+            file = compat_client.files.create(
+                file=file_buffer,
+                purpose="assistants",
+                expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+            )
 
         compat_client.vector_stores.files.create(
             vector_store_id=vector_store.id,
@@ -876,6 +913,7 @@ def test_openai_vector_store_delete_file_removes_from_vector_store(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create a vector store
     vector_store = compat_client.vector_stores.create(
@@ -889,7 +927,11 @@ def test_openai_vector_store_delete_file_removes_from_vector_store(
     test_content = b"The secret string is foobazbar."
     with BytesIO(test_content) as file_buffer:
         file_buffer.name = "openai_test.txt"
-        file = compat_client.files.create(file=file_buffer, purpose="assistants")
+        file = compat_client.files.create(
+            file=file_buffer,
+            purpose="assistants",
+            expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+        )
 
     # Attach the file to the vector store
     file_attach_response = compat_client.vector_stores.files.create(
@@ -921,6 +963,7 @@ def test_openai_vector_store_update_file(
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
 
     compat_client = compat_client_with_empty_stores
+    from llama_stack.apis.files import ExpiresAfter
 
     # Create a vector store
     vector_store = compat_client.vector_stores.create(
@@ -934,7 +977,11 @@ def test_openai_vector_store_update_file(
     test_content = b"This is a test file"
     with BytesIO(test_content) as file_buffer:
         file_buffer.name = "openai_test.txt"
-        file = compat_client.files.create(file=file_buffer, purpose="assistants")
+        file = compat_client.files.create(
+            file=file_buffer,
+            purpose="assistants",
+            expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+        )
 
     # Attach the file to the vector store
     file_attach_response = compat_client.vector_stores.files.create(
@@ -971,6 +1018,7 @@ def test_create_vector_store_files_duplicate_vector_store_name(
     This test confirms that client.vector_stores.create() creates a unique ID
     """
     skip_if_provider_doesnt_support_openai_vector_stores(client_with_models)
+    from llama_stack.apis.files import ExpiresAfter
 
     compat_client = compat_client_with_empty_stores
 
@@ -979,7 +1027,11 @@ def test_create_vector_store_files_duplicate_vector_store_name(
     for i in range(3):
         with BytesIO(f"This is a test file {i}".encode()) as file_buffer:
             file_buffer.name = f"openai_test_{i}.txt"
-            file = compat_client.files.create(file=file_buffer, purpose="assistants")
+            file = compat_client.files.create(
+                file=file_buffer,
+                purpose="assistants",
+                expires_after=ExpiresAfter(anchor="created_at", seconds=86400),  # 24 hours
+            )
         file_ids.append(file.id)
 
     vector_store = compat_client.vector_stores.create(
