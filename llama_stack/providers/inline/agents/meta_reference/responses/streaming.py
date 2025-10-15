@@ -900,6 +900,7 @@ class StreamingResponseOrchestrator:
                 item = OpenAIResponseOutputMessageFileSearchToolCall(
                     id=matching_item_id,
                     status="in_progress",
+                    queries=[tool_call.function.arguments or ""],
                 )
             else:
                 raise ValueError(f"Unsupported tool call: {tool_call.function.name}")
