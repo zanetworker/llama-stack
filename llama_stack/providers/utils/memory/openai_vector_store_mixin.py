@@ -53,6 +53,8 @@ from llama_stack.providers.utils.memory.vector_store import (
     make_overlapped_chunks,
 )
 
+EMBEDDING_DIMENSION = 768
+
 logger = get_logger(name=__name__, category="providers::utils")
 
 # Constants for OpenAI vector stores
@@ -352,12 +354,41 @@ class OpenAIVectorStoreMixin(ABC):
         """Creates a vector store."""
         created_at = int(time.time())
 
-        extra = params.model_extra or {}
-        provider_vector_db_id = extra.get("provider_vector_db_id")
-        embedding_model = extra.get("embedding_model")
-        embedding_dimension = extra.get("embedding_dimension")
+        # Extract llama-stack-specific parameters from extra_body
+        extra_body = params.model_extra or {}
+        metadata = params.metadata or {}
+
+        provider_vector_db_id = extra_body.get("provider_vector_db_id")
+
+        # Use embedding info from metadata if available, otherwise from extra_body
+        if metadata.get("embedding_model"):
+            # If either is in metadata, use metadata as source
+            embedding_model = metadata.get("embedding_model")
+            embedding_dimension = (
+                int(metadata["embedding_dimension"]) if metadata.get("embedding_dimension") else EMBEDDING_DIMENSION
+            )
+            logger.debug(
+                f"Using embedding config from metadata (takes precedence over extra_body): model='{embedding_model}', dimension={embedding_dimension}"
+            )
+
+            # Check for conflicts with extra_body
+            if extra_body.get("embedding_model") and extra_body["embedding_model"] != embedding_model:
+                raise ValueError(
+                    f"Embedding model inconsistent between metadata ('{embedding_model}') and extra_body ('{extra_body['embedding_model']}')"
+                )
+            if extra_body.get("embedding_dimension") and extra_body["embedding_dimension"] != embedding_dimension:
+                raise ValueError(
+                    f"Embedding dimension inconsistent between metadata ({embedding_dimension}) and extra_body ({extra_body['embedding_dimension']})"
+                )
+        else:
+            embedding_model = extra_body.get("embedding_model")
+            embedding_dimension = extra_body.get("embedding_dimension", EMBEDDING_DIMENSION)
+            logger.debug(
+                f"Using embedding config from extra_body: model='{embedding_model}', dimension={embedding_dimension}"
+            )
+
         # use provider_id set by router; fallback to provider's own ID when used directly via --stack-config
-        provider_id = extra.get("provider_id") or getattr(self, "__provider_id__", None)
+        provider_id = extra_body.get("provider_id") or getattr(self, "__provider_id__", None)
         # Derive the canonical vector_db_id (allow override, else generate)
         vector_db_id = provider_vector_db_id or generate_object_id("vector_store", lambda: f"vs_{uuid.uuid4()}")
 
@@ -422,7 +453,6 @@ class OpenAIVectorStoreMixin(ABC):
         }
 
         # Add provider information to metadata if provided
-        metadata = params.metadata or {}
         if provider_id:
             metadata["provider_id"] = provider_id
         if provider_vector_db_id:
