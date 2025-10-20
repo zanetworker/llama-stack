@@ -21,11 +21,7 @@ class WeaviateVectorIOConfig(BaseModel):
     )
 
     @classmethod
-    def sample_run_config(
-        cls,
-        __distro_dir__: str,
-        **kwargs: Any,
-    ) -> dict[str, Any]:
+    def sample_run_config(cls, __distro_dir__: str, **kwargs: Any) -> dict[str, Any]:
         return {
             "weaviate_api_key": None,
             "weaviate_cluster_url": "${env.WEAVIATE_CLUSTER_URL:=localhost:8080}",

@@ -27,6 +27,7 @@ from llama_stack.core.datatypes import (
     ShieldInput,
     TelemetryConfig,
     ToolGroupInput,
+    VectorStoresConfig,
 )
 from llama_stack.core.distribution import get_provider_registry
 from llama_stack.core.storage.datatypes import (
@@ -186,6 +187,7 @@ class RunConfigSettings(BaseModel):
     default_tool_groups: list[ToolGroupInput] | None = None
     default_datasets: list[DatasetInput] | None = None
     default_benchmarks: list[BenchmarkInput] | None = None
+    vector_stores_config: VectorStoresConfig | None = None
     telemetry: TelemetryConfig = Field(default_factory=lambda: TelemetryConfig(enabled=True))
     storage_backends: dict[str, Any] | None = None
     storage_stores: dict[str, Any] | None = None
@@ -263,7 +265,7 @@ class RunConfigSettings(BaseModel):
         )
 
         # Return a dict that matches StackRunConfig structure
-        return {
+        config = {
             "version": LLAMA_STACK_RUN_CONFIG_VERSION,
             "image_name": name,
             "container_image": container_image,
@@ -282,6 +284,11 @@ class RunConfigSettings(BaseModel):
             },
             "telemetry": self.telemetry.model_dump(exclude_none=True) if self.telemetry else None,
         }
+
+        if self.vector_stores_config:
+            config["vector_stores"] = self.vector_stores_config.model_dump(exclude_none=True)
+
+        return config
 
 
 class DistributionTemplate(BaseModel):

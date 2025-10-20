@@ -354,6 +354,26 @@ class AuthenticationRequiredError(Exception):
     pass
 
 
+class QualifiedModel(BaseModel):
+    """A qualified model identifier, consisting of a provider ID and a model ID."""
+
+    provider_id: str
+    model_id: str
+
+
+class VectorStoresConfig(BaseModel):
+    """Configuration for vector stores in the stack."""
+
+    default_provider_id: str | None = Field(
+        default=None,
+        description="ID of the vector_io provider to use as default when multiple providers are available and none is specified.",
+    )
+    default_embedding_model: QualifiedModel | None = Field(
+        default=None,
+        description="Default embedding model configuration for vector stores.",
+    )
+
+
 class QuotaPeriod(StrEnum):
     DAY = "day"
 
@@ -497,6 +517,11 @@ can be instantiated multiple times (with different configs) if necessary.
     external_apis_dir: Path | None = Field(
         default=None,
         description="Path to directory containing external API implementations. The APIs code and dependencies must be installed on the system.",
+    )
+
+    vector_stores: VectorStoresConfig | None = Field(
+        default=None,
+        description="Configuration for vector stores, including default embedding model",
     )
 
     @field_validator("external_providers_dir")

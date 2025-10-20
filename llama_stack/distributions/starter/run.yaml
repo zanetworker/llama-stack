@@ -128,6 +128,21 @@ providers:
       persistence:
         namespace: vector_io::pgvector
         backend: kv_default
+  - provider_id: ${env.QDRANT_URL:+qdrant}
+    provider_type: remote::qdrant
+    config:
+      api_key: ${env.QDRANT_API_KEY:=}
+      persistence:
+        namespace: vector_io::qdrant_remote
+        backend: kv_default
+  - provider_id: ${env.WEAVIATE_CLUSTER_URL:+weaviate}
+    provider_type: remote::weaviate
+    config:
+      weaviate_api_key: null
+      weaviate_cluster_url: ${env.WEAVIATE_CLUSTER_URL:=localhost:8080}
+      persistence:
+        namespace: vector_io::weaviate
+        backend: kv_default
   files:
   - provider_id: meta-reference-files
     provider_type: inline::localfs
@@ -253,3 +268,8 @@ server:
   port: 8321
 telemetry:
   enabled: true
+vector_stores:
+  default_provider_id: faiss
+  default_embedding_model:
+    provider_id: sentence-transformers
+    model_id: nomic-ai/nomic-embed-text-v1.5
