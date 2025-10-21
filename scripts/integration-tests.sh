@@ -410,6 +410,21 @@ elif [ $exit_code -eq 5 ]; then
     echo "⚠️ No tests collected (pattern matched no tests)"
 else
     echo "❌ Tests failed"
+    echo ""
+    echo "=== Dumping last 100 lines of logs for debugging ==="
+
+    # Output server or container logs based on stack config
+    if [[ "$STACK_CONFIG" == *"server:"* && -f "server.log" ]]; then
+        echo "--- Last 100 lines of server.log ---"
+        tail -100 server.log
+    elif [[ "$STACK_CONFIG" == *"docker:"* ]]; then
+        docker_log_file="docker-${DISTRO}-${INFERENCE_MODE}.log"
+        if [[ -f "$docker_log_file" ]]; then
+            echo "--- Last 100 lines of $docker_log_file ---"
+            tail -100 "$docker_log_file"
+        fi
+    fi
+
     exit 1
 fi
 
