@@ -49,6 +49,7 @@ from llama_stack.apis.agents.openai_responses import (
     OpenAIResponseOutputMessageMCPCall,
     OpenAIResponseOutputMessageMCPListTools,
     OpenAIResponseOutputMessageWebSearchToolCall,
+    OpenAIResponsePrompt,
     OpenAIResponseText,
     OpenAIResponseUsage,
     OpenAIResponseUsageInputTokensDetails,
@@ -113,6 +114,7 @@ class StreamingResponseOrchestrator:
         instructions: str,
         safety_api,
         guardrail_ids: list[str] | None = None,
+        prompt: OpenAIResponsePrompt | None = None,
     ):
         self.inference_api = inference_api
         self.ctx = ctx
@@ -123,6 +125,7 @@ class StreamingResponseOrchestrator:
         self.tool_executor = tool_executor
         self.safety_api = safety_api
         self.guardrail_ids = guardrail_ids or []
+        self.prompt = prompt
         self.sequence_number = 0
         # Store MCP tool mapping that gets built during tool processing
         self.mcp_tool_to_server: dict[str, OpenAIResponseInputToolMCP] = ctx.tool_context.previous_tools or {}
@@ -180,6 +183,7 @@ class StreamingResponseOrchestrator:
             error=error,
             usage=self.accumulated_usage,
             instructions=self.instructions,
+            prompt=self.prompt,
         )
 
     async def create_response(self) -> AsyncIterator[OpenAIResponseObjectStream]:

@@ -29,7 +29,7 @@ from llama_stack.apis.agents import (
     Turn,
 )
 from llama_stack.apis.agents.agents import ResponseGuardrail
-from llama_stack.apis.agents.openai_responses import OpenAIResponseText
+from llama_stack.apis.agents.openai_responses import OpenAIResponsePrompt, OpenAIResponseText
 from llama_stack.apis.common.responses import PaginatedResponse
 from llama_stack.apis.conversations import Conversations
 from llama_stack.apis.inference import (
@@ -329,6 +329,7 @@ class MetaReferenceAgentsImpl(Agents):
         self,
         input: str | list[OpenAIResponseInput],
         model: str,
+        prompt: OpenAIResponsePrompt | None = None,
         instructions: str | None = None,
         previous_response_id: str | None = None,
         conversation: str | None = None,
@@ -344,6 +345,7 @@ class MetaReferenceAgentsImpl(Agents):
         return await self.openai_responses_impl.create_openai_response(
             input,
             model,
+            prompt,
             instructions,
             previous_response_id,
             conversation,

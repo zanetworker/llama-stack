@@ -22,6 +22,7 @@ from llama_stack.apis.agents.openai_responses import (
     OpenAIResponseMessage,
     OpenAIResponseObject,
     OpenAIResponseObjectStream,
+    OpenAIResponsePrompt,
     OpenAIResponseText,
     OpenAIResponseTextFormat,
 )
@@ -239,6 +240,7 @@ class OpenAIResponsesImpl:
         self,
         input: str | list[OpenAIResponseInput],
         model: str,
+        prompt: OpenAIResponsePrompt | None = None,
         instructions: str | None = None,
         previous_response_id: str | None = None,
         conversation: str | None = None,
