@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator, Iterable
 from typing import Any
 
-from openai import NOT_GIVEN, AsyncOpenAI
+from openai import AsyncOpenAI
 from pydantic import BaseModel, ConfigDict
 
 from llama_stack.apis.inference import (
@@ -351,21 +351,21 @@ class OpenAIMixin(NeedsRequestProviderData, ABC, BaseModel):
         """
         Direct OpenAI embeddings API call.
         """
-        # Prepare request parameters
-        request_params = {
+        # Build request params conditionally to avoid NotGiven/Omit type mismatch
+        # The OpenAI SDK uses Omit in signatures but NOT_GIVEN has type NotGiven
+        request_params: dict[str, Any] = {
             "model": await self._get_provider_model_id(params.model),
             "input": params.input,
-            "encoding_format": params.encoding_format if params.encoding_format is not None else NOT_GIVEN,
-            "dimensions": params.dimensions if params.dimensions is not None else NOT_GIVEN,
-            "user": params.user if params.user is not None else NOT_GIVEN,
         }
+        if params.encoding_format is not None:
+            request_params["encoding_format"] = params.encoding_format
+        if params.dimensions is not None:
+            request_params["dimensions"] = params.dimensions
+        if params.user is not None:
+            request_params["user"] = params.user
+        if params.model_extra:
+            request_params["extra_body"] = params.model_extra
 
-        # Add extra_body if present
-        extra_body = params.model_extra
-        if extra_body:
-            request_params["extra_body"] = extra_body
-
-        # Call OpenAI embeddings API with properly typed parameters
         response = await self.client.embeddings.create(**request_params)
 
         data = []
