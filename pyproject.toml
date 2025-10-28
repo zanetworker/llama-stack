@@ -72,6 +72,12 @@ dev = [
     "black",
     "ruff",
     "mypy",
+    "pre-commit",
+    "ruamel.yaml", # needed for openapi generator
+]
+# Type checking dependencies - includes type stubs and optional runtime dependencies
+# needed for complete mypy coverage across all optional features
+type_checking = [
     "types-requests",
     "types-setuptools",
     "types-jsonschema",
@@ -79,8 +85,25 @@ dev = [
     "types-psutil",
     "types-tqdm",
     "boto3-stubs[s3]",
-    "pre-commit",
-    "ruamel.yaml", # needed for openapi generator
+    "streamlit",
+    "streamlit-option-menu",
+    "pandas",
+    "anthropic",
+    "databricks-sdk",
+    "fairscale",
+    "torchtune",
+    "trl",
+    "peft",
+    "datasets",
+    "together",
+    "nest-asyncio",
+    "pymongo",
+    "torchvision",
+    "sqlite-vec",
+    "faiss-cpu",
+    "lm-format-enforcer",
+    "mcp",
+    "ollama",
 ]
 # These are the dependencies required for running unit tests.
 unit = [
@@ -322,7 +345,17 @@ exclude = [
 
 [[tool.mypy.overrides]]
 # packages that lack typing annotations, do not have stubs, or are unavailable.
-module = ["yaml", "fire"]
+module = [
+    "yaml",
+    "fire",
+    "torchtune.*",
+    "fairscale.*",
+    "torchvision.*",
+    "datasets",
+    "nest_asyncio",
+    "streamlit_option_menu",
+    "lmformatenforcer.*",
+]
 ignore_missing_imports = true
 
 [tool.pydantic-mypy]
